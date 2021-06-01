@@ -3,7 +3,7 @@
  */
 public class ArrayStorage {
     Resume[] storage = new Resume[10000];
-    int firstEmptyCell = 0;
+    private int firstEmptyCell = 0;
 
     void clear() {
         for (int i = 0; i < firstEmptyCell; i++) {
@@ -14,7 +14,7 @@ public class ArrayStorage {
 
     void save(Resume r) {
         if (r == null) return;
-        if (firstEmptyCell > storage.length - 1) return;
+        if (firstEmptyCell == storage.length) return;
         storage[firstEmptyCell] = r;
         firstEmptyCell++;
     }
@@ -33,19 +33,13 @@ public class ArrayStorage {
         for (int i = 0; i < firstEmptyCell; i++) {
             if (storage[i].uuid.equals(uuid)) {
                 storage[i] = null;
-                fillEmptyCell(i);
+                int lastEntry = firstEmptyCell - 1;
+                if (lastEntry - i >= 0) System.arraycopy(storage, i + 1, storage, i, lastEntry - i);
+                storage[lastEntry] = null;
+                firstEmptyCell--;
                 break;
             }
         }
-        firstEmptyCell--;
-    }
-
-    private void fillEmptyCell(int empty) {
-        int lastEntry = firstEmptyCell - 1;
-        for (int i = empty; i < lastEntry; i++) {
-            storage[i] = storage[i + 1];
-        }
-        storage[lastEntry] = null;
     }
 
     /**
