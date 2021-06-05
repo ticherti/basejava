@@ -8,7 +8,7 @@ import java.util.Arrays;
  * Array based storage for Resumes
  */
 public class ArrayStorage {
-    Resume[] storage = new Resume[10_000];
+    private final Resume[] storage = new Resume[10_000];
     private int size = 0;
 
     public void clear() {
@@ -48,7 +48,9 @@ public class ArrayStorage {
             System.out.println("Not found for the update");
             return;
         }
-        if (findResume(resume.getUuid()) > -1) {
+        int index = findResume(resume.getUuid());
+        if (index > -1) {
+            storage[index] = resume;
             System.out.println("The resume has been updated. Uuid: " + resume.getUuid());
         }
     }
@@ -83,7 +85,7 @@ public class ArrayStorage {
 
     private int findResume(String uuid) {
         for (int i = 0; i < size; i++) {
-            if (storage[i].getUuid() == uuid) {
+            if (storage[i].getUuid().equals(uuid)) {
                 return i;
             }
         }
