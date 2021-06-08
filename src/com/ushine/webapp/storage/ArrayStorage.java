@@ -19,22 +19,20 @@ public class ArrayStorage {
     public void save(Resume r) {
         if (r == null) return;
         String uuid = r.getUuid();
-        if (size == storage.length) {
+        if (getIndex(uuid) > -1) {
+            System.out.println("There is already such resume in the storage. Uuid: " + uuid);
+        } else if (size >= storage.length) {
             System.out.println("The storage is full. The resume hasn't been added. Uuid: " + uuid);
-            return;
-        }
-        if (findResume(uuid) == -1) {
+        } else {
             storage[size] = r;
             size++;
             System.out.println("Successfully added the resume. Uuid: " + uuid);
-        } else {
-            System.out.println("There is already such resume in the storage. Uuid: " + uuid);
         }
     }
 
     public Resume get(String uuid) {
         if (uuid == null) return null;
-        int index = findResume(uuid);
+        int index = getIndex(uuid);
         if (index > -1) {
             System.out.println("That's the resume. Uuid: " + uuid);
             return storage[index];
@@ -48,18 +46,19 @@ public class ArrayStorage {
             System.out.println("Not found for the update");
             return;
         }
-        int index = findResume(resume.getUuid());
+        int index = getIndex(resume.getUuid());
         if (index > -1) {
             storage[index] = resume;
             System.out.println("The resume has been updated. Uuid: " + resume.getUuid());
-        }
+        } else System.out.println("No such resume in the storage. Uuid: \" + uuid");
     }
 
     public void delete(String uuid) {
         if (uuid == null) return;
-        int index = findResume(uuid);
-        if (index > -1) {
-            storage[index] = null;
+        int index = getIndex(uuid);
+        if (index == -1) {
+            System.out.println("There's no such resume in the storage. Uuid: " + uuid);
+        } else {
             int lastEntry = size - 1;
             if (lastEntry - index >= 0)
                 System.arraycopy(storage, index + 1, storage, index, lastEntry - index);
@@ -67,7 +66,7 @@ public class ArrayStorage {
             size--;
             System.out.println("The resume has been deleted. Uuid: " + uuid);
         }
-        System.out.println("There's no such resume in the storage. Uuid: " + uuid);
+
     }
 
     /**
@@ -83,7 +82,7 @@ public class ArrayStorage {
         return size;
     }
 
-    private int findResume(String uuid) {
+    private int getIndex(String uuid) {
         for (int i = 0; i < size; i++) {
             if (storage[i].getUuid().equals(uuid)) {
                 return i;

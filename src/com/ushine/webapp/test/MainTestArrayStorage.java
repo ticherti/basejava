@@ -32,6 +32,9 @@ public class MainTestArrayStorage {
         System.out.println("\nDon't update a resume");
         ARRAY_STORAGE.update(ARRAY_STORAGE.get("dummy"));
 
+        System.out.println("null resume update");
+        ARRAY_STORAGE.update(null);
+
         printAll();
         ARRAY_STORAGE.delete(r1.getUuid());
         printAll();
