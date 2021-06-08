@@ -7,13 +7,13 @@ import java.util.Arrays;
 /**
  * Array based storage for Resumes
  */
-public class ArrayStorage extends AbstractArrayStorage {
-
+public class SortedArrayStorage extends AbstractArrayStorage {
+//
     public void clear() {
         Arrays.fill(storage, 0, size, null);
         size = 0;
     }
-
+//
     public void save(Resume r) {
         if (r == null) return;
         String uuid = r.getUuid();
@@ -27,7 +27,7 @@ public class ArrayStorage extends AbstractArrayStorage {
             System.out.println("Successfully added the resume. Uuid: " + uuid);
         }
     }
-
+//
     public void update(Resume resume) {
         if (resume == null) {
             System.out.println("Not found for the update");
@@ -39,7 +39,7 @@ public class ArrayStorage extends AbstractArrayStorage {
             System.out.println("The resume has been updated. Uuid: " + resume.getUuid());
         } else System.out.println("No such resume in the storage. Uuid: \" + uuid");
     }
-
+//
     public void delete(String uuid) {
         if (uuid == null) return;
         int index = getIndex(uuid);
@@ -55,17 +55,20 @@ public class ArrayStorage extends AbstractArrayStorage {
         }
 
     }
-
+//
     public Resume[] getAll() {
         return Arrays.copyOfRange(storage, 0, size);
     }
 
     protected int getIndex(String uuid) {
-        for (int i = 0; i < size; i++) {
-            if (storage[i].getUuid().equals(uuid)) {
-                return i;
-            }
-        }
-        return -1;
+        Resume searchKey = new Resume();
+        searchKey.setUuid(uuid);
+        return Arrays.binarySearch(storage, 0, size, searchKey);
+//        for (int i = 0; i < size; i++) {
+//            if (storage[i].getUuid().equals(uuid)) {
+//                return i;
+//            }
+//        }
+//        return -1;
     }
 }

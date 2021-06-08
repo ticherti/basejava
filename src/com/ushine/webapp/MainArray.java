@@ -1,6 +1,7 @@
 package com.ushine.webapp;
 
 import com.ushine.webapp.model.Resume;
+import com.ushine.webapp.storage.AbstractArrayStorage;
 import com.ushine.webapp.storage.ArrayStorage;
 
 import java.io.BufferedReader;
@@ -12,7 +13,7 @@ import java.io.InputStreamReader;
  * (just run, no need to understand)
  */
 public class MainArray {
-    private final static ArrayStorage ARRAY_STORAGE = new ArrayStorage();
+    private final static AbstractArrayStorage ARRAY_STORAGE = new ArrayStorage();
 
     public static void main(String[] args) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
