@@ -9,7 +9,7 @@ import com.ushine.webapp.storage.SortedArrayStorage;
  * Test for your com.ushine.webapp.storage.ArrayStorage implementation
  */
 public class MainTestArrayStorage {
-    static final AbstractArrayStorage ARRAY_STORAGE = new SortedArrayStorage();
+    static final AbstractArrayStorage ARRAY_STORAGE = new ArrayStorage();
 
     public static void main(String[] args) {
         Resume r1 = new Resume();
@@ -32,7 +32,7 @@ public class MainTestArrayStorage {
         ARRAY_STORAGE.save(r6);
         ARRAY_STORAGE.save(r5);
 
-        System.out.println("Get r1: " + ARRAY_STORAGE.get(r1.getUuid()));
+        System.out.println("\nGet r1: " + ARRAY_STORAGE.get(r1.getUuid()));
         System.out.println("Size: " + ARRAY_STORAGE.size());
 
         System.out.println("Get dummy: " + ARRAY_STORAGE.get("dummy"));
@@ -43,7 +43,7 @@ public class MainTestArrayStorage {
         System.out.println("\nDon't update a resume");
         ARRAY_STORAGE.update(ARRAY_STORAGE.get("dummy"));
 
-        System.out.println("null resume update");
+        System.out.println("Null resume update");
         ARRAY_STORAGE.update(null);
 
         printAll();

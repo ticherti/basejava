@@ -9,11 +9,6 @@ import java.util.Arrays;
  */
 public class SortedArrayStorage extends AbstractArrayStorage {
 
-    public void clear() {
-        Arrays.fill(storage, 0, size, null);
-        size = 0;
-    }
-
     public void save(Resume r) {
         if (r == null) return;
         String uuid = r.getUuid();
@@ -33,17 +28,6 @@ public class SortedArrayStorage extends AbstractArrayStorage {
         }
     }
 
-    public void update(Resume resume) {
-        if (resume == null) {
-            System.out.println("Not found for the update");
-            return;
-        }
-        int index = getIndex(resume.getUuid());
-        if (index > -1) {
-            storage[index] = resume;
-            System.out.println("The resume has been updated. Uuid: " + resume.getUuid());
-        } else System.out.println("No such resume in the storage. Uuid: \" + uuid");
-    }
 
     public void delete(String uuid) {
         if (uuid == null) return;
@@ -58,11 +42,6 @@ public class SortedArrayStorage extends AbstractArrayStorage {
             size--;
             System.out.println("The resume has been deleted. Uuid: " + uuid);
         }
-
-    }
-
-    public Resume[] getAll() {
-        return Arrays.copyOfRange(storage, 0, size);
     }
 
     protected int getIndex(String uuid) {
