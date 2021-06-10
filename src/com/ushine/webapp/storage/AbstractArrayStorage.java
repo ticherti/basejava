@@ -62,8 +62,8 @@ public abstract class AbstractArrayStorage implements Storage {
         if (index < 0) {
             throw new NotExistStorageException(uuid);
         } else {
-            storage[index] = storage[size - 1];
             takeOut(index);
+            storage[size - 1] = null;
             size--;
             System.out.println("The resume has been deleted. Uuid: " + uuid);
         }
