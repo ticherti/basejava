@@ -1,5 +1,8 @@
 package com.ushine.webapp.storage;
 
+import com.ushine.webapp.exception.ExistStorageException;
+import com.ushine.webapp.exception.NotExistStorageException;
+import com.ushine.webapp.exception.StorageException;
 import com.ushine.webapp.model.Resume;
 
 import java.util.Arrays;
@@ -22,9 +25,9 @@ public abstract class AbstractArrayStorage implements Storage {
         String uuid = r.getUuid();
         int index = getIndex(uuid);
         if (index > -1) {
-            System.out.println("There is already such resume in the storage. Uuid: " + uuid);
+            throw new ExistStorageException(r.getUuid());
         } else if (size >= STORAGE_LIMIT) {
-            System.out.println("The storage is full. The resume hasn't been added. Uuid: " + uuid);
+            throw new StorageException("Storage overflow", r.getUuid());
         } else {
             insert(r, index);
             size++;
@@ -33,33 +36,31 @@ public abstract class AbstractArrayStorage implements Storage {
     }
 
     public void update(Resume resume) {
-        if (resume == null) {
-            System.out.println("Not found for the update");
-            return;
-        }
+        if (resume == null) return;
         int index = getIndex(resume.getUuid());
         if (index > -1) {
             storage[index] = resume;
             System.out.println("The resume has been updated. Uuid: " + resume.getUuid());
-        } else System.out.println("No such resume in the storage. Uuid: \" + uuid");
+        } else {
+            throw new NotExistStorageException(resume.getUuid());
+        }
     }
 
     public Resume get(String uuid) {
         if (uuid == null) return null;
         int index = getIndex(uuid);
-        if (index > -1) {
-            System.out.println("That's the resume. Uuid: " + uuid);
-            return storage[index];
+        if (index <= -1) {
+            throw new NotExistStorageException(uuid);
         }
-        System.out.println("No such resume in the storage. Uuid: " + uuid);
-        return null;
+        System.out.println("That's the resume. Uuid: " + uuid);
+        return storage[index];
     }
 
     public void delete(String uuid) {
         if (uuid == null) return;
         int index = getIndex(uuid);
         if (index < 0) {
-            System.out.println("There's no such resume in the storage. Uuid: " + uuid);
+            throw new NotExistStorageException(uuid);
         } else {
             storage[index] = storage[size - 1];
             takeOut(index);
