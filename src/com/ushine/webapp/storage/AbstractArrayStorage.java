@@ -31,7 +31,6 @@ public abstract class AbstractArrayStorage implements Storage {
         } else {
             insert(r, index);
             size++;
-            System.out.println("Successfully added the resume. Uuid: " + uuid);
         }
     }
 

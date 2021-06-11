@@ -8,18 +8,21 @@ import static org.junit.Assert.*;
 public class SortedArrayStorageTest extends AbstractArrayStorageTest {
 
     @Before
-    public void setUp()  {
+    public void setUp() throws Exception {
+        storage = new SortedArrayStorage();
+        super.setUp();
     }
 
     @Test
-    public void testGetIndex() {
+    public void getIndex() {
+
     }
 
     @Test
-    public void testInsert() {
+    public void insert() {
     }
 
     @Test
-    public void testTakeOut() {
+    public void takeOut() {
     }
 }
