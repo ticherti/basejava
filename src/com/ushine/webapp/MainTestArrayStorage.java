@@ -1,4 +1,4 @@
-package com.ushine.webapp.test;
+package com.ushine.webapp;
 
 import com.ushine.webapp.model.Resume;
 import com.ushine.webapp.storage.AbstractArrayStorage;
