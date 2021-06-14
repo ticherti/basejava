@@ -1,7 +1,6 @@
 package com.ushine.webapp.storage;
 
 import com.ushine.webapp.exception.ExistStorageException;
-import com.ushine.webapp.exception.NotExistStorageException;
 import com.ushine.webapp.model.Resume;
 
 import java.util.ArrayList;
@@ -27,7 +26,7 @@ public class ListStorage extends AbstractStorage {
 
     @Override
     public Resume[] getAll() {
-        return (Resume[]) storage.toArray();
+        return storage.toArray(new Resume[0]);
     }
 
     @Override
