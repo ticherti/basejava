@@ -10,7 +10,7 @@ import java.util.Arrays;
 /**
  * Array based storage for Resumes
  */
-public abstract class AbstractArrayStorage implements Storage {
+public abstract class AbstractArrayStorage extends AbstractStorage {
     protected static final int STORAGE_LIMIT = 10_000;
     protected final Resume[] storage = new Resume[STORAGE_LIMIT];
     protected int size = 0;
@@ -34,40 +34,6 @@ public abstract class AbstractArrayStorage implements Storage {
         }
     }
 
-    public void update(Resume resume) {
-        if (resume == null) return;
-        int index = getIndex(resume.getUuid());
-        if (index > -1) {
-            storage[index] = resume;
-            System.out.println("The resume has been updated. Uuid: " + resume.getUuid());
-        } else {
-            throw new NotExistStorageException(resume.getUuid());
-        }
-    }
-
-    public Resume get(String uuid) {
-        if (uuid == null) return null;
-        int index = getIndex(uuid);
-        if (index <= -1) {
-            throw new NotExistStorageException(uuid);
-        }
-        System.out.println("That's the resume. Uuid: " + uuid);
-        return storage[index];
-    }
-
-    public void delete(String uuid) {
-        if (uuid == null) return;
-        int index = getIndex(uuid);
-        if (index < 0) {
-            throw new NotExistStorageException(uuid);
-        } else {
-            takeOut(index);
-            storage[size - 1] = null;
-            size--;
-            System.out.println("The resume has been deleted. Uuid: " + uuid);
-        }
-    }
-
     public Resume[] getAll() {
         return Arrays.copyOfRange(storage, 0, size);
     }
@@ -81,4 +47,21 @@ public abstract class AbstractArrayStorage implements Storage {
     protected abstract void insert(Resume r, int index);
 
     protected abstract void takeOut(int index);
+
+    @Override
+    protected Resume getByIndex(int index) {
+        return storage[index];
+    }
+
+    @Override
+    protected void rewrite(int index, Resume resume) {
+        storage[index] = resume;
+    }
+
+    @Override
+    protected void erase(int index) {
+        takeOut(index);
+        storage[size - 1] = null;
+        size--;
+    }
 }
