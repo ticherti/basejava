@@ -10,7 +10,7 @@ public abstract class AbstractStorage implements Storage {
         if (index < 0) {
             throw new NotExistStorageException(uuid);
         }
-        return getByIndex(index);
+        return getByIndex(index, uuid);
     }
 
     public void update(Resume r) {
@@ -28,14 +28,14 @@ public abstract class AbstractStorage implements Storage {
         if (index < 0) {
             throw new NotExistStorageException(uuid);
         }
-        erase(index);
+        erase(index, uuid);
     }
 
     protected abstract int getIndex(String uuid);
 
-    protected abstract Resume getByIndex(int index);
+    protected abstract Resume getByIndex(int index, String uuid);
 
     protected abstract void rewrite(int index, Resume resume);
 
-    protected abstract void erase(int index);
+    protected abstract void erase(int index, String uuid);
 }

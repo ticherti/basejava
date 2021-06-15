@@ -3,11 +3,11 @@ package com.ushine.webapp.storage;
 import com.ushine.webapp.exception.ExistStorageException;
 import com.ushine.webapp.model.Resume;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
-public class ListStorage extends AbstractStorage {
-    private final List<Resume> storage = new ArrayList<>();
+public class MapStorage extends AbstractStorage{
+    private final Map<String, Resume> storage = new HashMap<>();
 
     @Override
     public void clear() {
@@ -17,15 +17,15 @@ public class ListStorage extends AbstractStorage {
     @Override
     public void save(Resume r) {
         if (r == null) return;
-        if (storage.contains(r)) {
+        if (storage.containsKey(r.getUuid())) {
             throw new ExistStorageException(r.getUuid());
         }
-        storage.add(r);
+        storage.put(r.getUuid(), r);
     }
 
     @Override
     public Resume[] getAll() {
-        return storage.toArray(new Resume[0]);
+        return storage.values().toArray(new Resume[0]);
     }
 
     @Override
@@ -35,25 +35,24 @@ public class ListStorage extends AbstractStorage {
 
     @Override
     protected int getIndex(String uuid) {
-        for (int i = 0; i < storage.size(); i++) {
-            if (storage.get(i).getUuid().equals(uuid)) return i;
-        }
-        return -1;
+        return storage.containsKey(uuid) ? 0 : -1;
     }
 
     @Override
     protected Resume getByIndex(int index, String uuid) {
-        return storage.get(index);
+        return storage.get(uuid);
     }
 
     @Override
     protected void rewrite(int index, Resume resume) {
-        storage.set(index, resume);
+        storage.put(resume.getUuid(), resume);
     }
 
     @Override
     protected void erase(int index, String uuid) {
-        storage.remove(index);
+        storage.remove(uuid);
     }
+
+
 
 }

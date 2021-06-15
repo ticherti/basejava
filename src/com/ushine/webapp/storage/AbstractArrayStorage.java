@@ -1,7 +1,6 @@
 package com.ushine.webapp.storage;
 
 import com.ushine.webapp.exception.ExistStorageException;
-import com.ushine.webapp.exception.NotExistStorageException;
 import com.ushine.webapp.exception.StorageException;
 import com.ushine.webapp.model.Resume;
 
@@ -48,7 +47,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     protected abstract void takeOut(int index);
 
     @Override
-    protected Resume getByIndex(int index) {
+    protected Resume getByIndex(int index, String uuid) {
         return storage[index];
     }
 
@@ -58,7 +57,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    protected void erase(int index) {
+    protected void erase(int index, String uuid) {
         takeOut(index);
         storage[size - 1] = null;
         size--;
