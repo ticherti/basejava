@@ -19,9 +19,8 @@ public class ListStorage extends AbstractStorage {
         if (r == null) return;
         if (storage.contains(r)) {
             throw new ExistStorageException(r.getUuid());
-        } else {
-            storage.add(r);
         }
+        storage.add(r);
     }
 
     @Override

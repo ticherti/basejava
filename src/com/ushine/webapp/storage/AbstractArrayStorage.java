@@ -28,10 +28,9 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
             throw new ExistStorageException(r.getUuid());
         } else if (size >= STORAGE_LIMIT) {
             throw new StorageException("Storage overflow", r.getUuid());
-        } else {
-            insert(r, index);
-            size++;
         }
+        insert(r, index);
+        size++;
     }
 
     public Resume[] getAll() {

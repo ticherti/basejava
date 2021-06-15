@@ -27,9 +27,8 @@ public abstract class AbstractStorage implements Storage {
         int index = getIndex(uuid);
         if (index < 0) {
             throw new NotExistStorageException(uuid);
-        } else {
-            erase(index);
         }
+        erase(index);
     }
 
     protected abstract int getIndex(String uuid);
