@@ -1,6 +1,5 @@
 package com.ushine.webapp.storage;
 
-import com.ushine.webapp.exception.ExistStorageException;
 import com.ushine.webapp.model.Resume;
 
 import java.util.HashMap;
@@ -12,15 +11,6 @@ public class MapStorage extends AbstractStorage{
     @Override
     public void clear() {
         storage.clear();
-    }
-
-    @Override
-    public void save(Resume r) {
-        if (r == null) return;
-        if (storage.containsKey(r.getUuid())) {
-            throw new ExistStorageException(r.getUuid());
-        }
-        storage.put(r.getUuid(), r);
     }
 
     @Override
@@ -39,9 +29,20 @@ public class MapStorage extends AbstractStorage{
     }
 
     @Override
+    protected boolean isPresent(Resume resume) {
+        return storage.containsKey(resume.getUuid());
+    }
+
+    @Override
+    protected void add(Resume resume) {
+        storage.put(resume.getUuid(), resume);
+    }
+    @Override
     protected Resume getByKey(Object uuid) {
         return storage.get((String) uuid);
     }
+
+
 
     @Override
     protected void rewrite(Object searchKey, Resume resume) {

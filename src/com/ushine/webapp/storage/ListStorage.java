@@ -1,6 +1,5 @@
 package com.ushine.webapp.storage;
 
-import com.ushine.webapp.exception.ExistStorageException;
 import com.ushine.webapp.model.Resume;
 
 import java.util.ArrayList;
@@ -12,15 +11,6 @@ public class ListStorage extends AbstractStorage {
     @Override
     public void clear() {
         storage.clear();
-    }
-
-    @Override
-    public void save(Resume r) {
-        if (r == null) return;
-        if (storage.contains(r)) {
-            throw new ExistStorageException(r.getUuid());
-        }
-        storage.add(r);
     }
 
     @Override
@@ -42,9 +32,20 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
+    protected boolean isPresent(Resume resume) {
+        return storage.contains(resume);
+    }
+
+    @Override
+    protected void add(Resume resume) {
+        storage.add(resume);
+    }
+    @Override
     protected Resume getByKey(Object index) {
         return storage.get((int) index);
     }
+
+
 
     @Override
     protected void rewrite(Object searchKey, Resume resume) {

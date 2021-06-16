@@ -16,8 +16,8 @@ public class SortedArrayStorage extends AbstractArrayStorage {
     }
 
     @Override
-    protected void insert(Resume r, int index) {
-        index = Math.abs(index) - 1;
+    protected void insert(Resume r) {
+        int index = Math.abs(getIndex(r.getUuid())) - 1;
         if (size - index > 0) {
             System.arraycopy(storage, index, storage, index + 1, size - index);
         }

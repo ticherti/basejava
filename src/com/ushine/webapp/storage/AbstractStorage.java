@@ -1,17 +1,24 @@
 package com.ushine.webapp.storage;
 
+import com.ushine.webapp.exception.ExistStorageException;
 import com.ushine.webapp.exception.NotExistStorageException;
 import com.ushine.webapp.model.Resume;
 
 public abstract class AbstractStorage implements Storage {
 
+    public void save(Resume resume) {
+        if (resume == null) return;
+        if (isPresent(resume)) throw new ExistStorageException(resume.getUuid());
+        add(resume);
+    }
+
     public Resume get(String uuid) {
         return getByKey(getKey(uuid));
     }
 
-    public void update(Resume r) {
-        if (r == null) return;
-        rewrite(getKey(r.getUuid()), r);
+    public void update(Resume resume) {
+        if (resume == null) return;
+        rewrite(getKey(resume.getUuid()), resume);
     }
 
     public void delete(String uuid) {
@@ -19,6 +26,10 @@ public abstract class AbstractStorage implements Storage {
     }
 
     protected abstract int getIndex(String uuid);
+
+    protected abstract boolean isPresent(Resume resume);
+
+    protected abstract void add(Resume resume);
 
     protected abstract Resume getByKey(Object searchKey);
 

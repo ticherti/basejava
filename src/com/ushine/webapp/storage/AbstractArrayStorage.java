@@ -1,6 +1,5 @@
 package com.ushine.webapp.storage;
 
-import com.ushine.webapp.exception.ExistStorageException;
 import com.ushine.webapp.exception.StorageException;
 import com.ushine.webapp.model.Resume;
 
@@ -19,20 +18,6 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         size = 0;
     }
 
-    public void save(Resume r) {
-        if (r == null) return;
-        String uuid = r.getUuid();
-        int index = getIndex(uuid);
-        if (index > -1) {
-            throw new ExistStorageException(r.getUuid());
-        }
-        if (size >= STORAGE_LIMIT) {
-            throw new StorageException("Storage overflow", r.getUuid());
-        }
-        insert(r, index);
-        size++;
-    }
-
     public Resume[] getAll() {
         return Arrays.copyOfRange(storage, 0, size);
     }
@@ -43,7 +28,22 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
 
     protected abstract int getIndex(String uuid);
 
-    protected abstract void insert(Resume r, int index);
+    @Override
+    protected boolean isPresent(Resume resume) {
+        int index = getIndex(resume.getUuid());
+        return index > -1;
+    }
+
+    @Override
+    protected void add(Resume resume) {
+        if (size >= STORAGE_LIMIT) {
+            throw new StorageException("Storage overflow", resume.getUuid());
+        }
+        insert(resume);
+        size++;
+    }
+
+    protected abstract void insert(Resume r);
 
     protected abstract void takeOut(int index);
 
