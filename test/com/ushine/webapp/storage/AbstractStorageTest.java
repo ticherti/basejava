@@ -6,6 +6,8 @@ import com.ushine.webapp.model.Resume;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
+
 import static org.junit.Assert.*;
 
 public abstract class AbstractStorageTest {
@@ -89,6 +91,7 @@ public abstract class AbstractStorageTest {
     public void getAll() {
         Resume[] expected = new Resume[]{r1, r2, r3};
         Resume[] actual = storage.getAll();
+        Arrays.sort(actual);
         assertArrayEquals(expected, actual);
     }
 
