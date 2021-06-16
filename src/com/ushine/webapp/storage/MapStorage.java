@@ -35,12 +35,12 @@ public class MapStorage extends AbstractStorage{
 
     @Override
     protected int getIndex(String uuid) {
-        return storage.containsKey(uuid) ? 0 : -1;
+        return storage.containsKey(uuid) ? Integer.MAX_VALUE : -1;
     }
 
     @Override
-    protected Resume getByIndex(int index, String uuid) {
-        return storage.get(uuid);
+    protected Resume getByIndex(Object uuid) {
+        return storage.get((String) uuid);
     }
 
     @Override

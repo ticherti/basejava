@@ -47,8 +47,8 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     protected abstract void takeOut(int index);
 
     @Override
-    protected Resume getByIndex(int index, String uuid) {
-        return storage[index];
+    protected Resume getByIndex(Object index) {
+        return storage[(int) index];
     }
 
     @Override
