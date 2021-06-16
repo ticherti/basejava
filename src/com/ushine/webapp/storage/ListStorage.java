@@ -42,18 +42,18 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected Resume getByIndex(Object index) {
+    protected Resume getByKey(Object index) {
         return storage.get((int) index);
     }
 
     @Override
-    protected void rewrite(int index, Resume resume) {
-        storage.set(index, resume);
+    protected void rewrite(Object searchKey, Resume resume) {
+        storage.set((int) searchKey, resume);
     }
 
     @Override
-    protected void erase(int index, String uuid) {
-        storage.remove(index);
+    protected void erase(Object searchKey) {
+        storage.remove((int) searchKey);
     }
 
 }

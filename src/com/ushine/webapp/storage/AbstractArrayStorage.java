@@ -48,18 +48,18 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     protected abstract void takeOut(int index);
 
     @Override
-    protected Resume getByIndex(Object index) {
+    protected Resume getByKey(Object index) {
         return storage[(int) index];
     }
 
     @Override
-    protected void rewrite(int index, Resume resume) {
-        storage[index] = resume;
+    protected void rewrite(Object searchKey, Resume resume) {
+        storage[(int) searchKey] = resume;
     }
 
     @Override
-    protected void erase(int index, String uuid) {
-        takeOut(index);
+    protected void erase(Object searchKey) {
+        takeOut((int) searchKey);
         storage[size - 1] = null;
         size--;
     }
