@@ -30,14 +30,13 @@ public class ListStorage extends AbstractStorage {
         }
         return -1;
     }
-
     @Override
-    protected boolean isPresent(Resume resume) {
-        return storage.contains(resume);
+    protected int checkPresent(Resume resume) {
+        return storage.contains(resume) ? 0 : -1;
     }
 
     @Override
-    protected void add(Resume resume) {
+    protected void add(Resume resume, int index) {
         storage.add(resume);
     }
     @Override

@@ -29,20 +29,19 @@ public class MapStorage extends AbstractStorage{
     }
 
     @Override
-    protected boolean isPresent(Resume resume) {
-        return storage.containsKey(resume.getUuid());
+    protected int checkPresent(Resume resume) {
+        return getIndex(resume.getUuid());
     }
 
     @Override
-    protected void add(Resume resume) {
+    protected void add(Resume resume, int index) {
         storage.put(resume.getUuid(), resume);
     }
+
     @Override
     protected Resume getByKey(Object uuid) {
         return storage.get((String) uuid);
     }
-
-
 
     @Override
     protected void rewrite(Object searchKey, Resume resume) {

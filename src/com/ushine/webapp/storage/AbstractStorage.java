@@ -8,8 +8,9 @@ public abstract class AbstractStorage implements Storage {
 
     public void save(Resume resume) {
         if (resume == null) return;
-        if (isPresent(resume)) throw new ExistStorageException(resume.getUuid());
-        add(resume);
+        int present = checkPresent(resume);
+        if (present > -1) throw new ExistStorageException(resume.getUuid());
+        add(resume, present);
     }
 
     public Resume get(String uuid) {
@@ -27,9 +28,9 @@ public abstract class AbstractStorage implements Storage {
 
     protected abstract int getIndex(String uuid);
 
-    protected abstract boolean isPresent(Resume resume);
+    protected abstract int checkPresent(Resume resume);
 
-    protected abstract void add(Resume resume);
+    protected abstract void add(Resume resume, int index);
 
     protected abstract Resume getByKey(Object searchKey);
 

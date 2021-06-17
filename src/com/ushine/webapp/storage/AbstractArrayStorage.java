@@ -29,21 +29,20 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     protected abstract int getIndex(String uuid);
 
     @Override
-    protected boolean isPresent(Resume resume) {
-        int index = getIndex(resume.getUuid());
-        return index > -1;
+    protected int checkPresent(Resume resume) {
+        return getIndex(resume.getUuid());
     }
 
     @Override
-    protected void add(Resume resume) {
+    protected void add(Resume resume, int index) {
         if (size >= STORAGE_LIMIT) {
             throw new StorageException("Storage overflow", resume.getUuid());
         }
-        insert(resume);
+        insert(resume, index);
         size++;
     }
 
-    protected abstract void insert(Resume r);
+    protected abstract void insert(Resume r, int index);
 
     protected abstract void takeOut(int index);
 
