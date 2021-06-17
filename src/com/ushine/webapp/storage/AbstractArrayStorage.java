@@ -52,13 +52,13 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    protected void rewrite(Object searchKey, Resume resume) {
-        storage[(int) searchKey] = resume;
+    protected void rewrite(Object index, Resume resume) {
+        storage[(int) index] = resume;
     }
 
     @Override
-    protected void erase(Object searchKey) {
-        takeOut((int) searchKey);
+    protected void erase(Object index) {
+        takeOut((int) index);
         storage[size - 1] = null;
         size--;
     }
