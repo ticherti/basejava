@@ -3,7 +3,6 @@ package com.ushine.webapp;
 import com.ushine.webapp.model.Resume;
 import com.ushine.webapp.storage.AbstractArrayStorage;
 import com.ushine.webapp.storage.ArrayStorage;
-import com.ushine.webapp.storage.SortedArrayStorage;
 
 /**
  * Test for your com.ushine.webapp.storage.ArrayStorage implementation
@@ -12,12 +11,12 @@ public class MainTestArrayStorage {
     static final AbstractArrayStorage ARRAY_STORAGE = new ArrayStorage();
 
     public static void main(String[] args) {
-        Resume r1 = new Resume("uuid1");
+        Resume r1 = new Resume( "uuid1");
         Resume r2 = new Resume("uuid2");
         Resume r3 = new Resume("uuid3");
-        Resume r10 = new Resume("uuid10");
-        Resume r6 = new Resume("uuid6");
-        Resume r5 = new Resume("uuid5");
+        Resume r10 = new Resume( "uuid10");
+        Resume r6 = new Resume( "uuid6");
+        Resume r5 = new Resume( "uuid5");
 
         ARRAY_STORAGE.save(r1);
         ARRAY_STORAGE.save(r2);

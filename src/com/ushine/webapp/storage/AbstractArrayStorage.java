@@ -13,6 +13,12 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     protected final Resume[] storage = new Resume[STORAGE_LIMIT];
     protected int size = 0;
 
+    protected abstract int getIndex(String uuid);
+
+    protected abstract void insert(Resume r, int index);
+
+    protected abstract void takeOut(int index);
+
     public void clear() {
         Arrays.fill(storage, 0, size, null);
         size = 0;
@@ -25,8 +31,6 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     public int size() {
         return size;
     }
-
-    protected abstract int getIndex(String uuid);
 
     @Override
     protected int checkPresent(Resume resume) {
@@ -41,11 +45,6 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         insert(resume, index);
         size++;
     }
-
-    protected abstract void insert(Resume r, int index);
-
-    protected abstract void takeOut(int index);
-
     @Override
     protected Resume getByKey(Object index) {
         return storage[(int) index];

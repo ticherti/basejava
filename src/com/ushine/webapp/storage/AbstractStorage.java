@@ -6,6 +6,18 @@ import com.ushine.webapp.model.Resume;
 
 public abstract class AbstractStorage implements Storage {
 
+    protected abstract int getIndex(String uuid);
+
+    protected abstract int checkPresent(Resume resume);
+
+    protected abstract void add(Resume resume, int searchKey);
+
+    protected abstract Resume getByKey(Object searchKey);
+
+    protected abstract void rewrite(Object searchKey, Resume resume);
+
+    protected abstract void erase(Object searchKey);
+
     public void save(Resume resume) {
         if (resume == null) return;
         int present = checkPresent(resume);
@@ -26,21 +38,9 @@ public abstract class AbstractStorage implements Storage {
         erase(getKey(uuid));
     }
 
-    protected abstract int getIndex(String uuid);
-
-    protected abstract int checkPresent(Resume resume);
-
-    protected abstract void add(Resume resume, int index);
-
-    protected abstract Resume getByKey(Object searchKey);
-
-    protected abstract void rewrite(Object searchKey, Resume resume);
-
-    protected abstract void erase(Object searchKey);
-
     protected Object getKey(String uuid) {
-        int index = getIndex(uuid);
-        if (index < 0) throw new NotExistStorageException(uuid);
-        return index == Integer.MAX_VALUE ? uuid : index;
+        int searchKey = getIndex(uuid);
+        if (searchKey < 0) throw new NotExistStorageException(uuid);
+        return searchKey == Integer.MAX_VALUE ? uuid : searchKey;
     }
 }
