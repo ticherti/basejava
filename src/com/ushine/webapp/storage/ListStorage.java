@@ -14,8 +14,8 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    public Resume[] getAll() {
-        return storage.toArray(new Resume[0]);
+    protected List<Resume> getAll() {
+        return storage;
     }
 
     @Override
@@ -30,6 +30,7 @@ public class ListStorage extends AbstractStorage {
         }
         return -1;
     }
+
     @Override
     protected int checkPresent(Resume resume) {
         return storage.contains(resume) ? 0 : -1;

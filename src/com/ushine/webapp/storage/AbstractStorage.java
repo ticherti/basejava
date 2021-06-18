@@ -4,6 +4,9 @@ import com.ushine.webapp.exception.ExistStorageException;
 import com.ushine.webapp.exception.NotExistStorageException;
 import com.ushine.webapp.model.Resume;
 
+import java.util.Comparator;
+import java.util.List;
+
 public abstract class AbstractStorage implements Storage {
 
     protected abstract int getIndex(String uuid);
@@ -38,9 +41,24 @@ public abstract class AbstractStorage implements Storage {
         erase(getKey(uuid));
     }
 
+    abstract protected List<Resume> getAll();
+    @Override
+    public List<Resume> getAllSorted() {
+        List<Resume> resumes = getAll();
+        resumes.sort(new ComparatorByFullName());
+        return resumes;
+    }
+
     protected Object getKey(String uuid) {
         int searchKey = getIndex(uuid);
         if (searchKey < 0) throw new NotExistStorageException(uuid);
         return searchKey == Integer.MAX_VALUE ? uuid : searchKey;
+    }
+
+    class ComparatorByFullName implements Comparator<Resume> {
+        @Override
+        public int compare(Resume o1, Resume o2) {
+            return o1.getFullName().compareTo(o2.getFullName());
+        }
     }
 }
