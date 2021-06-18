@@ -5,11 +5,20 @@ import com.ushine.webapp.exception.NotExistStorageException;
 import com.ushine.webapp.model.Resume;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.*;
-
+//@RunWith(Suite.class)
+//@Suite.SuiteClasses({
+//        ArrayStorageTest.class,
+//        SortedArrayStorageTest.class,
+//        ListStorageTest.class,
+//        MapStorageTest.class
+//})
 public abstract class AbstractStorageTest {
 
     protected Storage storage;
@@ -19,9 +28,9 @@ public abstract class AbstractStorageTest {
     private static final String UUID_3 = "uuid3";
     private static final String UUID_4 = "uuid4";
 
-    protected static final Resume r1 = new Resume("1", UUID_1);
+    protected static final Resume r1 = new Resume("3", UUID_1);
     protected static final Resume r2 = new Resume("2", UUID_2);
-    protected static final Resume r3 = new Resume("3", UUID_3);
+    protected static final Resume r3 = new Resume("2", UUID_3);
     private static final Resume r4 = new Resume("4", UUID_4);
 
     public AbstractStorageTest(Storage storage) {
@@ -89,10 +98,12 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void getAll() {
-        Resume[] expected = new Resume[]{r1, r2, r3};
-        Resume[] actual = storage.getAll();
-        Arrays.sort(actual);
-        assertArrayEquals(expected, actual);
+        List<Resume> expected = new ArrayList<Resume>();
+        expected.add(r2);
+        expected.add(r3);
+        expected.add(r1);
+        List<Resume> actual = storage.getAllSorted();
+        assertEquals(expected, actual);
     }
 
     @Test

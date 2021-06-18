@@ -2,8 +2,7 @@ package com.ushine.webapp.storage;
 
 import com.ushine.webapp.model.Resume;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class MapStorage extends AbstractStorage{
     private final Map<String, Resume> storage = new HashMap<>();
@@ -14,8 +13,8 @@ public class MapStorage extends AbstractStorage{
     }
 
     @Override
-    public Resume[] getAll() {
-        return storage.values().toArray(new Resume[0]);
+    public List<Resume> getAll() {
+        return new ArrayList<>(storage.values());
     }
 
     @Override

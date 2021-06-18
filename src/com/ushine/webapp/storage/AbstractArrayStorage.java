@@ -4,6 +4,8 @@ import com.ushine.webapp.exception.StorageException;
 import com.ushine.webapp.model.Resume;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Array based storage for Resumes
@@ -24,12 +26,12 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         size = 0;
     }
 
-    public Resume[] getAll() {
-        return Arrays.copyOfRange(storage, 0, size);
-    }
-
     public int size() {
         return size;
+    }
+
+    protected List<Resume> getAll() {
+        return Arrays.asList(Arrays.copyOfRange(storage, 0, size));
     }
 
     @Override
