@@ -1,6 +1,6 @@
 package com.ushine.webapp.storage;
 
-public class AbstractMapStorageTest extends AbstractStorageTest {
+public abstract class AbstractMapStorageTest extends AbstractStorageTest {
 
     public AbstractMapStorageTest(Storage storage) {
         super(storage);
