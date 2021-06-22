@@ -4,7 +4,6 @@ import com.ushine.webapp.exception.StorageException;
 import com.ushine.webapp.model.Resume;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -15,38 +14,35 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     protected final Resume[] storage = new Resume[STORAGE_LIMIT];
     protected int size = 0;
 
-    protected abstract int getIndex(String uuid);
-
     protected abstract void insert(Resume r, int index);
 
     protected abstract void takeOut(int index);
 
+    @Override
+    public int size() {
+        return size;
+    }
+
+    @Override
     public void clear() {
         Arrays.fill(storage, 0, size, null);
         size = 0;
     }
 
-    public int size() {
-        return size;
-    }
-
-    protected List<Resume> getAll() {
-        return Arrays.asList(Arrays.copyOfRange(storage, 0, size));
+    @Override
+    protected boolean isExist(Object searchKey) {
+        return (int) searchKey > -1;
     }
 
     @Override
-    protected int checkPresent(Resume resume) {
-        return getIndex(resume.getUuid());
-    }
-
-    @Override
-    protected void add(Resume resume, int index) {
+    protected void add(Resume resume, Object index) {
         if (size >= STORAGE_LIMIT) {
             throw new StorageException("Storage overflow", resume.getUuid());
         }
-        insert(resume, index);
+        insert(resume, (Integer) index);
         size++;
     }
+
     @Override
     protected Resume getByKey(Object index) {
         return storage[(int) index];
@@ -62,5 +58,9 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         takeOut((int) index);
         storage[size - 1] = null;
         size--;
+    }
+
+    protected List<Resume> getAll() {
+        return Arrays.asList(Arrays.copyOfRange(storage, 0, size));
     }
 }

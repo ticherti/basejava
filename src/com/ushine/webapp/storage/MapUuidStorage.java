@@ -4,18 +4,8 @@ import com.ushine.webapp.model.Resume;
 
 import java.util.*;
 
-public class MapStorage extends AbstractStorage{
+public class MapUuidStorage extends AbstractMapStorage {
     private final Map<String, Resume> storage = new HashMap<>();
-
-    @Override
-    public void clear() {
-        storage.clear();
-    }
-
-    @Override
-    public List<Resume> getAll() {
-        return new ArrayList<>(storage.values());
-    }
 
     @Override
     public int size() {
@@ -23,17 +13,22 @@ public class MapStorage extends AbstractStorage{
     }
 
     @Override
-    protected int getIndex(String uuid) {
-        return storage.containsKey(uuid) ? Integer.MAX_VALUE : -1;
+    public void clear() {
+        storage.clear();
     }
 
     @Override
-    protected int checkPresent(Resume resume) {
-        return getIndex(resume.getUuid());
+    protected Object getSearchKey(String uuid) {
+        return uuid;
     }
 
     @Override
-    protected void add(Resume resume, int index) {
+    protected boolean isExist(Object searchKey) {
+        return storage.containsKey((String) searchKey);
+    }
+
+    @Override
+    protected void add(Resume resume, Object index) {
         storage.put(resume.getUuid(), resume);
     }
 
@@ -52,6 +47,10 @@ public class MapStorage extends AbstractStorage{
         storage.remove((String) searchKey);
     }
 
+    @Override
+    protected List<Resume> getAll() {
+        return new ArrayList<>(storage.values());
+    }
 
 
 }

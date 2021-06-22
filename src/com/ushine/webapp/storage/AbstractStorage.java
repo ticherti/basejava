@@ -9,11 +9,11 @@ import java.util.List;
 
 public abstract class AbstractStorage implements Storage {
 
-    protected abstract int getIndex(String uuid);
+    protected abstract Object getSearchKey(String uuid);
 
-    protected abstract int checkPresent(Resume resume);
+    protected abstract boolean isExist(Object searchKey);
 
-    protected abstract void add(Resume resume, int searchKey);
+    protected abstract void add(Resume resume, Object searchKey);
 
     protected abstract Resume getByKey(Object searchKey);
 
@@ -21,44 +21,55 @@ public abstract class AbstractStorage implements Storage {
 
     protected abstract void erase(Object searchKey);
 
+    protected abstract List<Resume> getAll();
+
+
     public void save(Resume resume) {
-        if (resume == null) return;
-        int present = checkPresent(resume);
-        if (present > -1) throw new ExistStorageException(resume.getUuid());
-        add(resume, present);
+        Object searchKey = getSearchKey(resume.getUuid());
+        if (isExist(searchKey))
+            throw new ExistStorageException(resume.getUuid());
+        add(resume, searchKey);
     }
 
     public Resume get(String uuid) {
-        return getByKey(getKey(uuid));
+        return getByKey(getPresentKey(uuid));
     }
 
     public void update(Resume resume) {
         if (resume == null) return;
-        rewrite(getKey(resume.getUuid()), resume);
+        rewrite(getPresentKey(resume.getUuid()), resume);
     }
 
     public void delete(String uuid) {
-        erase(getKey(uuid));
+        erase(getPresentKey(uuid));
     }
 
-    abstract protected List<Resume> getAll();
     @Override
     public List<Resume> getAllSorted() {
         List<Resume> resumes = getAll();
-        resumes.sort(new ComparatorByFullName());
+        resumes.sort(new ComparatorByFullName().thenComparing(new ComparatorByUuid()));
         return resumes;
     }
 
-    protected Object getKey(String uuid) {
-        int searchKey = getIndex(uuid);
-        if (searchKey < 0) throw new NotExistStorageException(uuid);
-        return searchKey == Integer.MAX_VALUE ? uuid : searchKey;
+    protected Object getPresentKey(String uuid) {
+        Object searchKey = getSearchKey(uuid);
+        if (!isExist(searchKey))
+            throw new NotExistStorageException(uuid);
+        return searchKey;
     }
 
-    class ComparatorByFullName implements Comparator<Resume> {
+    static class ComparatorByFullName implements Comparator<Resume> {
         @Override
         public int compare(Resume o1, Resume o2) {
             return o1.getFullName().compareTo(o2.getFullName());
         }
+    }
+
+    static class ComparatorByUuid implements Comparator<Resume> {
+        @Override
+        public int compare(Resume o1, Resume o2) {
+            return o1.getUuid().compareTo(o2.getUuid());
+        }
+
     }
 }
