@@ -5,7 +5,7 @@ import com.ushine.webapp.model.Resume;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListStorage extends AbstractStorage {
+public class ListStorage extends AbstractStorage<Integer> {
     private final List<Resume> storage = new ArrayList<>();
 
     @Override
@@ -19,7 +19,7 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected Object getSearchKey(String uuid) {
+    protected Integer getSearchKey(String uuid) {
         for (int i = 0; i < storage.size(); i++) {
             if (storage.get(i).getUuid().equals(uuid)) return i;
         }
@@ -27,32 +27,32 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected boolean isExist(Object searchKey) {
-        return (int) searchKey > -1;
+    protected boolean isExist(Integer searchKey) {
+        return searchKey > -1;
     }
 
     @Override
-    protected void add(Resume resume, Object Object) {
+    protected void add(Resume resume, Integer Integer) {
         storage.add(resume);
     }
 
     @Override
-    protected Resume getByKey(Object index) {
-        return storage.get((int) index);
+    protected Resume getByKey(Integer index) {
+        return storage.get(index);
     }
 
     @Override
-    protected void rewrite(Object index, Resume resume) {
-        storage.set((int) index, resume);
+    protected void rewrite(Integer index, Resume resume) {
+        storage.set(index, resume);
     }
 
     @Override
-    protected void erase(Object index) {
+    protected void erase(Integer index) {
         storage.remove((int) index);
     }
 
     @Override
     protected List<Resume> getAll() {
-        return storage;
+        return new ArrayList<>(storage);
     }
 }

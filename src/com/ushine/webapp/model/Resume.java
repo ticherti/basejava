@@ -1,5 +1,6 @@
 package com.ushine.webapp.model;
 
+import java.util.Objects;
 import java.util.UUID;
 /**
  * Initial resume class
@@ -16,6 +17,8 @@ public class Resume implements Comparable<Resume> {
     }
 
     public Resume(String fullName, String uuid){
+        Objects.requireNonNull(fullName, "Full name must not be null");
+        Objects.requireNonNull(uuid, "Uuid must not be null");
         this.fullName = fullName;
         this.uuid = uuid;
     }
@@ -34,17 +37,20 @@ public class Resume implements Comparable<Resume> {
 
         Resume resume = (Resume) o;
 
-        return uuid.equals(resume.uuid);
+        if (!Objects.equals(uuid, resume.uuid)) return false;
+        return Objects.equals(fullName, resume.fullName);
     }
 
     @Override
     public int hashCode() {
-        return uuid.hashCode();
+        int result = uuid != null ? uuid.hashCode() : 0;
+        result = 31 * result + (fullName != null ? fullName.hashCode() : 0);
+        return result;
     }
 
     @Override
     public String toString() {
-        return uuid;
+        return uuid + '(' + fullName + ')';
     }
 
     @Override

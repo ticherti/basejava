@@ -5,20 +5,11 @@ import com.ushine.webapp.exception.NotExistStorageException;
 import com.ushine.webapp.model.Resume;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
-//@RunWith(Suite.class)
-//@Suite.SuiteClasses({
-//        ArrayStorageTest.class,
-//        SortedArrayStorageTest.class,
-//        ListStorageTest.class,
-//        MapStorageTest.class
-//})
 public abstract class AbstractStorageTest {
 
     protected Storage storage;

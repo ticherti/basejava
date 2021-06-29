@@ -6,41 +6,49 @@ import com.ushine.webapp.model.Resume;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Logger;
 
-public abstract class AbstractStorage implements Storage {
+public abstract class AbstractStorage<SK> implements Storage {
+    private static final Logger LOG = Logger.getLogger(AbstractStorage.class.getName());
 
-    protected abstract Object getSearchKey(String uuid);
+    protected abstract SK getSearchKey(String uuid);
 
-    protected abstract boolean isExist(Object searchKey);
+    protected abstract boolean isExist(SK searchKey);
 
-    protected abstract void add(Resume resume, Object searchKey);
+    protected abstract void add(Resume resume, SK searchKey);
 
-    protected abstract Resume getByKey(Object searchKey);
+    protected abstract Resume getByKey(SK searchKey);
 
-    protected abstract void rewrite(Object searchKey, Resume resume);
+    protected abstract void rewrite(SK searchKey, Resume resume);
 
-    protected abstract void erase(Object searchKey);
+    protected abstract void erase(SK searchKey);
 
     protected abstract List<Resume> getAll();
 
 
     public void save(Resume resume) {
-        Object searchKey = getSearchKey(resume.getUuid());
-        if (isExist(searchKey))
+        SK searchKey = getSearchKey(resume.getUuid());
+        if (isExist(searchKey)) {
+            LOG.warning("save " + resume + "doesn't exist");
             throw new ExistStorageException(resume.getUuid());
+        }
         add(resume, searchKey);
     }
 
     public Resume get(String uuid) {
+        LOG.info("get " + uuid);
         return getByKey(getPresentKey(uuid));
     }
 
     public void update(Resume resume) {
+        LOG.info("update " + resume);
         if (resume == null) return;
         rewrite(getPresentKey(resume.getUuid()), resume);
     }
 
     public void delete(String uuid) {
+
+        LOG.info("delete " + uuid);
         erase(getPresentKey(uuid));
     }
 
@@ -51,8 +59,8 @@ public abstract class AbstractStorage implements Storage {
         return resumes;
     }
 
-    protected Object getPresentKey(String uuid) {
-        Object searchKey = getSearchKey(uuid);
+    protected SK getPresentKey(String uuid) {
+        SK searchKey = getSearchKey(uuid);
         if (!isExist(searchKey))
             throw new NotExistStorageException(uuid);
         return searchKey;
