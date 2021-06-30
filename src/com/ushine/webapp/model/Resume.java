@@ -11,8 +11,8 @@ public class Resume implements Comparable<Resume> {
     // Unique identifier
     private final String uuid;
     private String fullName;
-    Map<ContactType, Link> contacts;
-    Map<SectionType, AbstractSection> sections;
+    public Map<ContactType, Link> contacts;
+    public Map<SectionType, AbstractSection> sections;
 
     public Resume(String fullName) {
         this(fullName, UUID.randomUUID().toString());

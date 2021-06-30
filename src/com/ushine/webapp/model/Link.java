@@ -4,6 +4,11 @@ public class Link {
     private String name;
     private String reference;
 
+    public Link(String name, String reference) {
+        this.name = name;
+        this.reference = reference;
+    }
+
     public String getName() {
         return name;
     }
