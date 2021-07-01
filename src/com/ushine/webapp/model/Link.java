@@ -2,11 +2,14 @@ package com.ushine.webapp.model;
 
 public class Link {
     private String name;
-    private String reference;
+    private String url;
 
-    public Link(String name, String reference) {
+    public Link(String url) {
+        this.url = url;
+    }
+    public Link(String name, String url) {
         this.name = name;
-        this.reference = reference;
+        this.url = url;
     }
 
     public String getName() {
@@ -17,16 +20,17 @@ public class Link {
         this.name = name;
     }
 
-    public String getReference() {
-        return reference;
+    public String getUrl() {
+        return url;
     }
 
-    public void setReference(String reference) {
-        this.reference = reference;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     @Override
     public String toString() {
-        return name + ' ' + reference;
+
+        return name == null? url : name + ' ' + url;
     }
 }
