@@ -1,10 +1,13 @@
 package com.ushine.webapp.model;
 
-public class TextSection extends AbstractSection{
+import java.util.Objects;
 
-    private String text;
+public class TextSection extends AbstractSection {
+
+    private final String text;
 
     public TextSection(String text) {
+        Objects.requireNonNull(text, "Mustn't be null");
         this.text = text;
     }
 
@@ -12,12 +15,21 @@ public class TextSection extends AbstractSection{
         return text;
     }
 
-    public void setText(String text) {
-        this.text = text;
-    }
-
     @Override
     public String toString() {
         return text;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TextSection that = (TextSection) o;
+        return text.equals(that.text);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(text);
     }
 }

@@ -11,7 +11,7 @@ public class Resume implements Comparable<Resume> {
 
     // Unique identifier
     private final String uuid;
-    private String fullName;
+    private final String fullName;
     private Map<ContactType, Link> contacts;
     private Map<SectionType, AbstractSection> sections;
 

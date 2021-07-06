@@ -21,8 +21,8 @@ public class ResumeTestData {
         sections.put(SectionType.OBJECTIVE, new TextSection("Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям"));
         sections.put(SectionType.PERSONAL, new TextSection("Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры."));
 
-        sections.put(SectionType.ACHIEVEMENT, createListforAchievements());
-        sections.put(SectionType.QUALIFICATIONS, createListforQualifications());
+        sections.put(SectionType.ACHIEVEMENT, createListForAchievements());
+        sections.put(SectionType.QUALIFICATIONS, createListForQualifications());
 
         sections.put(SectionType.EXPERIENCE, createListforExperience());
         sections.put(SectionType.EDUCATION, createListforEducation());
@@ -44,10 +44,10 @@ public class ResumeTestData {
         contacts.put(ContactType.PHONENUMBER, new Link("+7(921) 855-0482", ""));
         contacts.put(ContactType.SKYPE, new Link("grigory.kislin", "skype:grigory.kislin"));
         contacts.put(ContactType.EMAIL, new Link("gkislin@yandex.ru", "mailto:gkislin@yandex.ru"));
-        contacts.put(ContactType.LINKEDIN, new Link( "https://www.linkedin.com/in/gkislin"));
+        contacts.put(ContactType.LINKEDIN, new Link("https://www.linkedin.com/in/gkislin"));
         contacts.put(ContactType.GITHUB, new Link("https://github.com/gkislin"));
-        contacts.put(ContactType.STACKOVERFLOW, new Link( "https://stackoverflow.com/users/548473"));
-        contacts.put(ContactType.HOMEPAGE, new Link( "http://gkislin.ru/"));
+        contacts.put(ContactType.STACKOVERFLOW, new Link("https://stackoverflow.com/users/548473"));
+        contacts.put(ContactType.HOMEPAGE, new Link("http://gkislin.ru/"));
         resume.setContacts(contacts);
     }
 
@@ -59,7 +59,7 @@ public class ResumeTestData {
         }
     }
 
-    private static ListSection createListforAchievements() {
+    private static ListSection createListForAchievements() {
         List<String> lines = new ArrayList<>();
         lines.add("С 2013 года: разработка проектов \"Разработка Web приложения\",\"Java Enterprise\", \"Многомодульный maven. Многопоточность. XML (JAXB/StAX). Веб сервисы (JAX-RS/SOAP). Удаленное взаимодействие (JMS/AKKA)\". Организация онлайн стажировок и ведение проектов. Более 1000 выпускников.");
         lines.add("Реализация двухфакторной аутентификации для онлайн платформы управления проектами Wrike. Интеграция с Twilio, DuoSecurity, Google Authenticator, Jira, Zendesk.");
@@ -67,10 +67,10 @@ public class ResumeTestData {
         lines.add("Реализация c нуля Rich Internet Application приложения на стеке технологий JPA, Spring, Spring-MVC, GWT, ExtGWT (GXT), Commet, HTML5, Highstock для алгоритмического трейдинга.");
         lines.add("Создание JavaEE фреймворка для отказоустойчивого взаимодействия слабо-связанных сервисов (SOA-base архитектура, JAX-WS, JMS, AS Glassfish). Сбор статистики сервисов и информации о состоянии через систему мониторинга Nagios. Реализация онлайн клиента для администрирования и мониторинга системы по JMX (Jython/ Django).");
         lines.add("Реализация протоколов по приему платежей всех основных платежных системы России (Cyberplat, Eport, Chronopay, Сбербанк), Белоруcсии(Erip, Osmp) и Никарагуа.");
-        return createSectionList(lines);
+        return new ListSection(lines);
     }
 
-    private static ListSection createListforQualifications() {
+    private static ListSection createListForQualifications() {
         List<String> lines = new ArrayList<>();
         lines.add("JEE AS: GlassFish (v2.1, v3), OC4J, JBoss, Tomcat, Jetty, WebLogic, WSO2");
         lines.add("Version control: Subversion, Git, Mercury, ClearCase, Perforce");
@@ -90,60 +90,34 @@ public class ResumeTestData {
         lines.add("Отличное знание и опыт применения концепций ООП, SOA, шаблонов проектрирования, архитектурных шаблонов, UML, функционального программирования");
         lines.add("Родной русский, английский \"upper intermediate\"");
 
-        return createSectionList(lines);
-    }
-
-    private static ListSection createSectionList(List<String> lines) {
-        ListSection list = new ListSection();
-        list.setLines(lines);
-        return list;
+        return new ListSection(lines);
     }
 
     private static OrganizationSection createListforExperience() {
-        List<Organization> list = new ArrayList<>();
 
-        Organization newOrg = new Organization();
-        newOrg.setPlaceName(new Link("Java Online Projects", ""));
-
-        Position newPos = new Position();
-        newPos.setPeriodStart(YearMonth.parse("2013-10"));
-        newPos.setName("Автор проекта.");
-        newPos.setDescription("Создание, организация и проведение Java онлайн проектов и стажировок.");
         List<Position> positions = new ArrayList<>();
-        positions.add(newPos);
-        newOrg.setPositions(positions);
+        positions.add(new Position(YearMonth.parse("2013-10"), null, "Автор проекта.", "Создание, организация и проведение Java онлайн проектов и стажировок."));
+
+        Organization newOrg = new Organization("Java Online Projects", "", positions);
+
+        List<Organization> list = new ArrayList<>();
         list.add(newOrg);
-        OrganizationSection os = new OrganizationSection();
-        os.setOrganizations(list);
-        return os;
+
+        return new OrganizationSection(list);
     }
 
     private static OrganizationSection createListforEducation() {
-        List<Organization> list = new ArrayList<>();
-
-        Organization newOrg = new Organization();
-        newOrg.setPlaceName(new Link("Санкт-Петербургский национальный исследовательский университет информационных технологий, механики и оптики", "http://www.ifmo.ru/"));
 
         List<Position> positions = new ArrayList<>();
-        Position newPos = new Position();
-        newPos.setPeriodStart(YearMonth.parse("1987-09"));
-        newPos.setPeriodFinish(YearMonth.parse("1993-07"));
-        newPos.setName("Инженер (программист Fortran, C)");
+        positions.add(new Position(YearMonth.parse("1987-09"), YearMonth.parse("1993-07"), "Инженер (программист Fortran, C)", null));
+        positions.add(new Position(YearMonth.parse("1993-09"), YearMonth.parse("1996-07"), "Аспирантура (программист С, С++)", null));
 
+        Organization newOrg = new Organization("Санкт-Петербургский национальный исследовательский университет информационных технологий, механики и оптики", "http://www.ifmo.ru/", positions);
 
-        Position newPos2 = new Position();
-        newPos2.setPeriodStart(YearMonth.parse("1993-09"));
-        newPos2.setPeriodFinish(YearMonth.parse("1996-07"));
-        newPos2.setName("Аспирантура (программист С, С++)");
-
-        positions.add(newPos);
-        positions.add(newPos2);
-
-        newOrg.setPositions(positions);
+        List<Organization> list = new ArrayList<>();
         list.add(newOrg);
-        OrganizationSection os = new OrganizationSection();
-        os.setOrganizations(list);
-        return os;
+
+        return new OrganizationSection(list);
     }
 
 }
