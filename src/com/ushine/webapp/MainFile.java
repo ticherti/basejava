@@ -6,20 +6,19 @@ import java.util.Objects;
 public class MainFile {
     public static void main(String[] args) {
         File pack = new File(".\\src\\com\\ushine\\webapp");
-        checkFile(pack);
+        checkFile(pack, "\t");
 
     }
 
-    private static void checkFile(File file) {
-        for (File f : Objects.requireNonNull(file.listFiles())
-        ) {
-            if (f.isDirectory()) {
-                checkFile(f);
-            } else {
-                System.out.println(f.getName());
+    private static void checkFile(File file, String s) {
+        System.out.println(s + file.getName());
+        if (file.isDirectory()) {
+            for (File f : Objects.requireNonNull(file.listFiles())) {
+                checkFile(f, s + "\t");
             }
         }
     }
 }
+
 
 
