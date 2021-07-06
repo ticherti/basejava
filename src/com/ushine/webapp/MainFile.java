@@ -1,6 +1,7 @@
 package com.ushine.webapp;
 
 import java.io.File;
+import java.util.Objects;
 
 public class MainFile {
     public static void main(String[] args) {
@@ -10,7 +11,7 @@ public class MainFile {
     }
 
     private static void checkFile(File file) {
-        for (File f : file.listFiles()
+        for (File f : Objects.requireNonNull(file.listFiles())
         ) {
             if (f.isDirectory()) {
                 checkFile(f);
