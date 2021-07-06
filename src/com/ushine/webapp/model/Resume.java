@@ -1,5 +1,6 @@
 package com.ushine.webapp.model;
 
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -12,8 +13,8 @@ public class Resume implements Comparable<Resume> {
     // Unique identifier
     private final String uuid;
     private final String fullName;
-    private Map<ContactType, Link> contacts;
-    private Map<SectionType, AbstractSection> sections;
+    private final Map<ContactType, Link> contacts = new EnumMap<>(ContactType.class);
+    private final Map<SectionType, AbstractSection> sections = new EnumMap<>(SectionType.class);
 
     public Resume(String fullName) {
         this(fullName, UUID.randomUUID().toString());
@@ -38,16 +39,8 @@ public class Resume implements Comparable<Resume> {
         return contacts;
     }
 
-    public void setContacts(Map<ContactType, Link> contacts) {
-        this.contacts = contacts;
-    }
-
     public Map<SectionType, AbstractSection> getSections() {
         return sections;
-    }
-
-    public void setSections(Map<SectionType, AbstractSection> sections) {
-        this.sections = sections;
     }
 
     @Override

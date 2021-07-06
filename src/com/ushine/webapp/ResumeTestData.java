@@ -6,29 +6,24 @@ import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 public class ResumeTestData {
 
+    public static Resume getResume(String uuid, String fullNme) {
+        Resume resume = new Resume(fullNme, uuid);
+        fillContacts(resume);
+        fillSections(resume);
+        return resume;
+    }
+
     public static void main(String[] args) {
         Resume test = new Resume("Григорий Кислин");
-        System.out.println(test.getFullName());
+
         fillContacts(test);
+        fillSections(test);
+
+        System.out.println(test.getFullName());
         printContacts(test);
-
-        Map<SectionType, AbstractSection> sections = new TreeMap<>();
-
-        sections.put(SectionType.OBJECTIVE, new TextSection("Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям"));
-        sections.put(SectionType.PERSONAL, new TextSection("Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры."));
-
-        sections.put(SectionType.ACHIEVEMENT, createListForAchievements());
-        sections.put(SectionType.QUALIFICATIONS, createListForQualifications());
-
-        sections.put(SectionType.EXPERIENCE, createListforExperience());
-        sections.put(SectionType.EDUCATION, createListforEducation());
-
-        test.setSections(sections);
-
         for (Map.Entry<SectionType, AbstractSection> entry : test.getSections().entrySet()
         ) {
             System.out.println();
@@ -39,24 +34,26 @@ public class ResumeTestData {
     }
 
     public static void fillContacts(Resume resume) {
-        Map<ContactType, Link> contacts = resume.getContacts();
-        contacts = new TreeMap<>();
-        contacts.put(ContactType.PHONENUMBER, new Link("+7(921) 855-0482", ""));
-        contacts.put(ContactType.SKYPE, new Link("grigory.kislin", "skype:grigory.kislin"));
-        contacts.put(ContactType.EMAIL, new Link("gkislin@yandex.ru", "mailto:gkislin@yandex.ru"));
-        contacts.put(ContactType.LINKEDIN, new Link("https://www.linkedin.com/in/gkislin"));
-        contacts.put(ContactType.GITHUB, new Link("https://github.com/gkislin"));
-        contacts.put(ContactType.STACKOVERFLOW, new Link("https://stackoverflow.com/users/548473"));
-        contacts.put(ContactType.HOMEPAGE, new Link("http://gkislin.ru/"));
-        resume.setContacts(contacts);
+        resume.getContacts().put(ContactType.PHONENUMBER, new Link("+7(921) 855-0482", ""));
+        resume.getContacts().put(ContactType.SKYPE, new Link("grigory.kislin", "skype:grigory.kislin"));
+        resume.getContacts().put(ContactType.EMAIL, new Link("gkislin@yandex.ru", "mailto:gkislin@yandex.ru"));
+        resume.getContacts().put(ContactType.LINKEDIN, new Link("https://www.linkedin.com/in/gkislin"));
+        resume.getContacts().put(ContactType.GITHUB, new Link("https://github.com/gkislin"));
+        resume.getContacts().put(ContactType.STACKOVERFLOW, new Link("https://stackoverflow.com/users/548473"));
+        resume.getContacts().put(ContactType.HOMEPAGE, new Link("http://gkislin.ru/"));
     }
 
-    public static void printContacts(Resume resume) {
-        for (Map.Entry<ContactType, Link> entry : resume.getContacts().entrySet()
-        ) {
-            System.out.println(entry.getKey().getTitle());
-            System.out.println(entry.getValue().toString());
-        }
+    public static void fillSections(Resume resume) {
+
+        resume.getSections().put(SectionType.OBJECTIVE, new TextSection("Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям"));
+        resume.getSections().put(SectionType.PERSONAL, new TextSection("Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры."));
+
+        resume.getSections().put(SectionType.ACHIEVEMENT, createListForAchievements());
+        resume.getSections().put(SectionType.QUALIFICATIONS, createListForQualifications());
+
+        resume.getSections().put(SectionType.EXPERIENCE, createListForExperience());
+        resume.getSections().put(SectionType.EDUCATION, createListforEducation());
+
     }
 
     private static ListSection createListForAchievements() {
@@ -93,7 +90,7 @@ public class ResumeTestData {
         return new ListSection(lines);
     }
 
-    private static OrganizationSection createListforExperience() {
+    private static OrganizationSection createListForExperience() {
 
         List<Position> positions = new ArrayList<>();
         positions.add(new Position(YearMonth.parse("2013-10"), null, "Автор проекта.", "Создание, организация и проведение Java онлайн проектов и стажировок."));
@@ -120,4 +117,11 @@ public class ResumeTestData {
         return new OrganizationSection(list);
     }
 
+    public static void printContacts(Resume resume) {
+        for (Map.Entry<ContactType, Link> entry : resume.getContacts().entrySet()
+        ) {
+            System.out.println(entry.getKey().getTitle());
+            System.out.println(entry.getValue().toString());
+        }
+    }
 }
