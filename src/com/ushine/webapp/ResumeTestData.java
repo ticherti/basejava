@@ -9,8 +9,8 @@ import java.util.Map;
 
 public class ResumeTestData {
 
-    public static Resume getResume(String uuid, String fullNme) {
-        Resume resume = new Resume(fullNme, uuid);
+    public static Resume getResume(String fullname, String uuid) {
+        Resume resume = new Resume(fullname, uuid);
         fillContacts(resume);
         fillSections(resume);
         return resume;
