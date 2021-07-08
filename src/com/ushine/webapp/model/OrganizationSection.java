@@ -1,11 +1,16 @@
 package com.ushine.webapp.model;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 public class OrganizationSection extends AbstractSection {
     private List<Organization> organizations;
 
+    public OrganizationSection(Organization... organizations) {
+        Objects.requireNonNull(organizations, "Mustn't be null");
+        this.organizations = Arrays.asList(organizations);
+    }
     public OrganizationSection(List<Organization> organizations) {
         Objects.requireNonNull(organizations, "Mustn't be null");
         this.organizations = organizations;

@@ -1,13 +1,17 @@
 package com.ushine.webapp.model;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 public class ListSection extends AbstractSection{
     private final List<String> lines;
 
+    public ListSection(String... lines) {
+        Objects.requireNonNull(lines, "Mustn't be null");
+        this.lines = Arrays.asList(lines);
+    }
     public ListSection(List<String> lines) {
-
         Objects.requireNonNull(lines, "Mustn't be null");
         this.lines = lines;
     }

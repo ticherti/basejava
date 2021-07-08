@@ -92,8 +92,8 @@ public class ResumeTestData {
 
     private static OrganizationSection createListForExperience() {
 
-        List<Position> positions = new ArrayList<>();
-        positions.add(new Position(YearMonth.parse("2013-10"), null, "Автор проекта.", "Создание, организация и проведение Java онлайн проектов и стажировок."));
+        List<Organization.Position> positions = new ArrayList<>();
+        positions.add(new Organization.Position(YearMonth.parse("2013-10"), null, "Автор проекта.", "Создание, организация и проведение Java онлайн проектов и стажировок."));
 
         Organization newOrg = new Organization("Java Online Projects", "", positions);
 
@@ -105,9 +105,9 @@ public class ResumeTestData {
 
     private static OrganizationSection createListforEducation() {
 
-        List<Position> positions = new ArrayList<>();
-        positions.add(new Position(YearMonth.parse("1987-09"), YearMonth.parse("1993-07"), "Инженер (программист Fortran, C)", null));
-        positions.add(new Position(YearMonth.parse("1993-09"), YearMonth.parse("1996-07"), "Аспирантура (программист С, С++)", null));
+        List<Organization.Position> positions = new ArrayList<>();
+        positions.add(new Organization.Position(YearMonth.parse("1987-09"), YearMonth.parse("1993-07"), "Инженер (программист Fortran, C)", null));
+        positions.add(new Organization.Position(YearMonth.parse("1993-09"), YearMonth.parse("1996-07"), "Аспирантура (программист С, С++)", null));
 
         Organization newOrg = new Organization("Санкт-Петербургский национальный исследовательский университет информационных технологий, механики и оптики", "http://www.ifmo.ru/", positions);
 
