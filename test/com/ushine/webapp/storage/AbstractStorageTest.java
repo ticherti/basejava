@@ -7,12 +7,13 @@ import com.ushine.webapp.model.Resume;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
 public abstract class AbstractStorageTest {
-
+    protected static final File STORAGE_DIR = new File("G:\\Projects\\basejava\\Storage");
     protected Storage storage;
 
     private static final String UUID_1 = "uuid1";
@@ -28,6 +29,7 @@ public abstract class AbstractStorageTest {
     public AbstractStorageTest(Storage storage) {
         this.storage = storage;
     }
+
 
     @Before
     public void setUp() {

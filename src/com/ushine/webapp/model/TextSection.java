@@ -1,8 +1,9 @@
 package com.ushine.webapp.model;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class TextSection extends AbstractSection {
+public class TextSection extends AbstractSection  {
 
     private final String text;
 

@@ -1,10 +1,13 @@
 package com.ushine.webapp.model;
 
+import java.io.Serializable;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.Objects;
 
-public class Organization {
+public class Organization implements Serializable {
+    private static final long serialVersionUID = 1l;
+
     private final Link placeName;
     private final List<Position> positions;
 
@@ -51,7 +54,9 @@ public class Organization {
         return Objects.hash(placeName, positions);
     }
 
-    public static class Position {
+    public static class Position implements Serializable{
+        private static final long serialVersionUID = 1l;
+
         private final YearMonth periodStart;
         private final YearMonth periodFinish;
         private final String name;

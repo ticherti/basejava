@@ -1,8 +1,11 @@
 package com.ushine.webapp.model;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Link {
+public class Link implements Serializable {
+    private static final long serialVersionUID = 1l;
+
     private String name;
     private String url;
 
