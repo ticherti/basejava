@@ -8,10 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class AbstractFileStorage extends AbstractStorage<File> {
-    private File directory;
+public  class AbstractFileStorage extends AbstractStorage<File>{
+    private final File directory;
+    private final RouteStrategy strategy;
 
-    protected AbstractFileStorage(File directory) {
+    protected AbstractFileStorage(File directory, RouteStrategy strategy) {
         Objects.requireNonNull(directory, "Directory mustn't be null");
         if (!directory.isDirectory()) {
             throw new IllegalArgumentException(directory.getAbsolutePath() + " is not directory");
@@ -20,11 +21,8 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
             throw new IllegalArgumentException(directory.getAbsolutePath() + " is not readable/writable");
         }
         this.directory = directory;
+        this.strategy = strategy;
     }
-
-    protected abstract void doWrite(Resume resume, OutputStream os) throws IOException;
-
-    protected abstract Resume doRead(InputStream is) throws IOException;
 
     @Override
     protected File getSearchKey(String uuid) {
@@ -40,7 +38,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     protected void add(Resume resume, File file) {
         try {
             file.createNewFile();
-            doWrite(resume, new BufferedOutputStream(new FileOutputStream(file)));
+            strategy.doWrite(resume, new BufferedOutputStream(new FileOutputStream(file)));
         } catch (IOException e) {
             throw new StorageException("IO Error", file.getName(), e);
         }
@@ -50,7 +48,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     protected Resume getByKey(File file) {
         Resume r;
         try {
-            r = doRead(new BufferedInputStream(new FileInputStream(file)));
+            r = strategy.doRead(new BufferedInputStream(new FileInputStream(file)));
         } catch (IOException e) {
             throw new StorageException("IO Error", file.getName(), e);
         }
@@ -60,7 +58,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     @Override
     protected void rewrite(File file, Resume resume) {
         try {
-            doWrite(resume, new BufferedOutputStream(new FileOutputStream(file)));
+            strategy.doWrite(resume, new BufferedOutputStream(new FileOutputStream(file)));
         } catch (IOException e) {
             throw new StorageException("IO Error", file.getName(), e);
         }
@@ -79,7 +77,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
         for (File f : directory.listFiles()
         ) {
             try {
-                list.add(doRead(new BufferedInputStream(new FileInputStream(f))));
+                list.add(strategy.doRead(new BufferedInputStream(new FileInputStream(f))));
             } catch (IOException e) {
                 throw new StorageException("IO Error", f.getName(), e);
             }
