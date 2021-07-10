@@ -8,11 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public  class AbstractFileStorage extends AbstractStorage<File>{
+public  class FileStorage extends AbstractStorage<File>{
     private final File directory;
-    private final RouteStrategy strategy;
+    private final SerializeStrategy strategy;
 
-    protected AbstractFileStorage(File directory, RouteStrategy strategy) {
+    protected FileStorage(File directory, SerializeStrategy strategy) {
         Objects.requireNonNull(directory, "Directory mustn't be null");
         if (!directory.isDirectory()) {
             throw new IllegalArgumentException(directory.getAbsolutePath() + " is not directory");

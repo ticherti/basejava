@@ -11,11 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public  class AbstractPathStorage extends AbstractStorage<Path> {
+public  class PathStorage extends AbstractStorage<Path> {
     private final Path directory;
-    private final RouteStrategy strategy;
+    private final SerializeStrategy strategy;
 
-    protected AbstractPathStorage(String dir, RouteStrategy strategy) {
+    protected PathStorage(String dir, SerializeStrategy strategy) {
         Objects.requireNonNull(dir, "Directory mustn't be null");
         Path obtainedDir = Paths.get(dir);
         if (!Files.isDirectory(obtainedDir) || !Files.isWritable(obtainedDir)) {

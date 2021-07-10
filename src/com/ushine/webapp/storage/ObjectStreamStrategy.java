@@ -5,10 +5,7 @@ import com.ushine.webapp.model.Resume;
 
 import java.io.*;
 
-public class ObjectStreamStorage implements RouteStrategy{
-//    protected ObjectStreamStorage(File directory) {
-//        super(directory);
-//    }
+public class ObjectStreamStrategy implements SerializeStrategy {
 
     @Override
      public void doWrite(Resume resume, OutputStream os) throws IOException {
