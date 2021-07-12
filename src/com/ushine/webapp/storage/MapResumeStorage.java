@@ -2,11 +2,6 @@ package com.ushine.webapp.storage;
 
 import com.ushine.webapp.model.Resume;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 public class MapResumeStorage extends AbstractMapStorage<Resume> {
 
     @Override

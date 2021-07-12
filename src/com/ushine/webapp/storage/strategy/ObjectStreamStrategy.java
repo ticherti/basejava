@@ -1,8 +1,7 @@
-package com.ushine.webapp.storage;
+package com.ushine.webapp.storage.strategy;
 
 import com.ushine.webapp.exception.StorageException;
 import com.ushine.webapp.model.Resume;
-
 import java.io.*;
 
 public class ObjectStreamStrategy implements SerializeStrategy {

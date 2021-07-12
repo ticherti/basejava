@@ -1,4 +1,4 @@
-package com.ushine.webapp.storage;
+package com.ushine.webapp.storage.strategy;
 
 import com.ushine.webapp.model.Resume;
 

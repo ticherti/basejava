@@ -36,19 +36,19 @@ public abstract class AbstractStorage<SK> implements Storage {
     }
 
     public Resume get(String uuid) {
-        LOG.info("get " + uuid);
+//        LOG.info("get " + uuid);
         return getByKey(getPresentKey(uuid));
     }
 
     public void update(Resume resume) {
-        LOG.info("update " + resume);
+//        LOG.info("update " + resume);
         if (resume == null) return;
         rewrite(getPresentKey(resume.getUuid()), resume);
     }
 
     public void delete(String uuid) {
 
-        LOG.info("delete " + uuid);
+//        LOG.info("delete " + uuid);
         erase(getPresentKey(uuid));
     }
 
