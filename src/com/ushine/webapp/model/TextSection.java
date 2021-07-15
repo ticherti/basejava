@@ -1,11 +1,13 @@
 package com.ushine.webapp.model;
 
-import java.io.Serializable;
 import java.util.Objects;
 
-public class TextSection extends AbstractSection  {
+public class TextSection extends AbstractSection {
 
-    private final String text;
+    private String text;
+
+    public TextSection() {
+    }
 
     public TextSection(String text) {
         Objects.requireNonNull(text, "Mustn't be null");

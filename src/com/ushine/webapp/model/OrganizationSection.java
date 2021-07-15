@@ -7,10 +7,14 @@ import java.util.Objects;
 public class OrganizationSection extends AbstractSection {
     private List<Organization> organizations;
 
+    public OrganizationSection() {
+    }
+
     public OrganizationSection(Organization... organizations) {
         Objects.requireNonNull(organizations, "Mustn't be null");
         this.organizations = Arrays.asList(organizations);
     }
+
     public OrganizationSection(List<Organization> organizations) {
         Objects.requireNonNull(organizations, "Mustn't be null");
         this.organizations = organizations;

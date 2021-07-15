@@ -1,21 +1,32 @@
 package com.ushine.webapp.model;
 
+import com.ushine.webapp.util.YearMonthAdapter;
+
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import javax.xml.bind.annotation.XmlAccessType;
+
 import java.io.Serializable;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.Objects;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Organization implements Serializable {
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
 
-    private final Link placeName;
-    private final List<Position> positions;
+    private Link placeName;
+    private List<Position> positions;
+
+    public Organization() {
+    }
 
     public Organization(String name, String url, List<Position> positions) {
         Objects.requireNonNull(positions, "Mustn't be null");
         this.placeName = new Link(name, url);
         this.positions = positions;
     }
+
     public Organization(Link homepage, List<Position> positions) {
         Objects.requireNonNull(positions, "Mustn't be null");
         this.placeName = homepage;
@@ -34,8 +45,8 @@ public class Organization implements Serializable {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(placeName.toString()).append('\n');
-        for (Position pos: positions
-             ) {
+        for (Position pos : positions
+        ) {
             sb.append(pos).append('\n');
         }
         return sb.toString();
@@ -54,13 +65,19 @@ public class Organization implements Serializable {
         return Objects.hash(placeName, positions);
     }
 
-    public static class Position implements Serializable{
-        private static final long serialVersionUID = 1l;
 
-        private final YearMonth periodStart;
-        private final YearMonth periodFinish;
-        private final String name;
-        private final String description;
+    @XmlAccessorType(XmlAccessType.FIELD)
+    public static class Position implements Serializable {
+        private static final long serialVersionUID = 1L;
+        @XmlJavaTypeAdapter(value = YearMonthAdapter.class)
+        private YearMonth periodStart;
+        @XmlJavaTypeAdapter(value = YearMonthAdapter.class)
+        private YearMonth periodFinish;
+        private String name;
+        private String description;
+
+        public Position() {
+        }
 
         public Position(YearMonth periodStart, YearMonth periodFinish, String name, String description) {
             Objects.requireNonNull(periodStart, "Mustn't be null");
@@ -94,10 +111,10 @@ public class Organization implements Serializable {
             if (periodFinish == null) {
                 now = "Сейчас";
             }
-            if (printDescription == null){
+            if (printDescription == null) {
                 printDescription = "";
             }
-            return periodStart + " - " + now.toString() +
+            return periodStart + " - " + now +
                     "\n" + name +
                     "\n" + printDescription;
         }
