@@ -35,7 +35,7 @@ public class Link implements Serializable {
     }
 
     public String getUrl() {
-        return url;
+        return url == null ? "" : url;
     }
 
     public void setUrl(String url) {

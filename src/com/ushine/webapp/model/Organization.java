@@ -69,6 +69,7 @@ public class Organization implements Serializable {
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class Position implements Serializable {
         private static final long serialVersionUID = 1L;
+        private final static YearMonth NOW_DATE = YearMonth.parse("3000-01");
         @XmlJavaTypeAdapter(value = YearMonthAdapter.class)
         private YearMonth periodStart;
         @XmlJavaTypeAdapter(value = YearMonthAdapter.class)
@@ -83,7 +84,7 @@ public class Organization implements Serializable {
             Objects.requireNonNull(periodStart, "Mustn't be null");
             Objects.requireNonNull(name, "Mustn't be null");
             this.periodStart = periodStart;
-            this.periodFinish = periodFinish;
+            this.periodFinish = periodFinish == null ? NOW_DATE : periodFinish;
             this.name = name;
             this.description = description;
         }
@@ -108,7 +109,7 @@ public class Organization implements Serializable {
         public String toString() {
             Object now = periodFinish;
             Object printDescription = description;
-            if (periodFinish == null) {
+            if (periodFinish == NOW_DATE) {
                 now = "Сейчас";
             }
             if (printDescription == null) {

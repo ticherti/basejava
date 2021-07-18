@@ -20,6 +20,10 @@ public class OrganizationSection extends AbstractSection {
         this.organizations = organizations;
     }
 
+    public List<Organization> getOrganizations() {
+        return organizations;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -33,9 +37,6 @@ public class OrganizationSection extends AbstractSection {
         return Objects.hash(organizations);
     }
 
-    public List<Organization> getOrganizations() {
-        return organizations;
-    }
 
     @Override
     public String toString() {
