@@ -23,19 +23,18 @@ public class DataStreamStrategy implements SerializeStrategy {
                 dos.writeUTF(entry.getValue().getName());
                 dos.writeUTF(entry.getValue().getUrl());
             }
-            //TO DO insert foreach
 
-            //text section
-            writeTextSection(resume, dos, SectionType.OBJECTIVE);
-            writeTextSection(resume, dos, SectionType.PERSONAL);
-
-//            list section
-            writeListSection(resume, dos, SectionType.ACHIEVEMENT);
-            writeListSection(resume, dos, SectionType.QUALIFICATIONS);
-
-//            //organization section
-            writeOrgSection(resume, dos, SectionType.EXPERIENCE);
-            writeOrgSection(resume, dos, SectionType.EDUCATION);
+            dos.writeInt(resume.getSections().size());
+            for (Map.Entry<SectionType, AbstractSection> entry : resume.getSections().entrySet()
+            ) {
+                if (entry.getValue().getClass() == TextSection.class) {
+                    writeTextSection(resume, dos, entry.getKey());
+                } else if (entry.getValue().getClass() == ListSection.class) {
+                    writeListSection(resume, dos, entry.getKey());
+                } else {
+                    writeOrgSection(resume, dos, entry.getKey());
+                }
+            }
         }
     }
 
@@ -51,32 +50,32 @@ public class DataStreamStrategy implements SerializeStrategy {
                 String url = read(dis);
                 resume.addContact(cType, new Link(name, url));
             }
-
-//            text sections
-            readTextSection(dis, resume);
-            readTextSection(dis, resume);
-
-//            List sections
-            readListSection(dis, resume);
-            readListSection(dis, resume);
-
-//            //Organization section
-
-            readOrgSection(dis, resume);
-            readOrgSection(dis, resume);
-
+            size = dis.readInt();
+            for (int i = 0; i < size; i++) {
+                String sType = dis.readUTF();
+                if (sType.equals(TextSection.class.getName())){
+                    readTextSection(dis, resume);
+                }
+                else if (sType.equals(ListSection.class.getName())){
+                    readListSection(dis, resume);
+                }
+                else {
+                    readOrgSection(dis, resume);
+                }
+            }
             return resume;
         }
     }
 
     private void writeTextSection(Resume resume, DataOutputStream dos, SectionType type) throws IOException {
-        TextSection ts;
+        dos.writeUTF(TextSection.class.getName());
         dos.writeUTF(type.name());
-        ts = (TextSection) (resume.getSections().get(type));
+        TextSection ts = (TextSection) resume.getSections().get(type);
         dos.writeUTF(ts.getText());
     }
 
     private void writeListSection(Resume resume, DataOutputStream dos, SectionType type) throws IOException {
+        dos.writeUTF(ListSection.class.getName());
         dos.writeUTF(type.name());
         List<String> list = ((ListSection) resume.getSections().get(type)).getLines();
         int size = list.size();
@@ -87,6 +86,7 @@ public class DataStreamStrategy implements SerializeStrategy {
     }
 
     private void writeOrgSection(Resume resume, DataOutputStream dos, SectionType type) throws IOException {
+        dos.writeUTF(OrganizationSection.class.getName());
         dos.writeUTF(type.name());
         List<Organization> listOrg = ((OrganizationSection) resume.getSections().get(type)).getOrganizations();
         int size = listOrg.size();
@@ -141,7 +141,6 @@ public class DataStreamStrategy implements SerializeStrategy {
         listOrg = new ArrayList<>();
         int size = dis.readInt();
         for (int i = 0; i < size; i++) {
-
             listOrg.add(new Organization(dis.readUTF(), dis.readUTF(), readPosition(dis, dis.readInt())));
         }
         resume.addSection(sType, new OrganizationSection(listOrg));
