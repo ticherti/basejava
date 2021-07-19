@@ -94,7 +94,7 @@ public class FileStorage extends AbstractStorage<File> {
 
     private File[] getFiles(){
         File[] files = directory.listFiles();
-        if (files == null) throw new StorageException("No files in the storage directory", null);
+        if (files == null) throw new StorageException("No files in the storage directory", "no uuid");
         return files;
     }
 }
