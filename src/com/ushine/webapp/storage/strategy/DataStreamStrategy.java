@@ -28,19 +28,18 @@ public class DataStreamStrategy implements SerializeStrategy {
             dos.writeInt(resume.getSections().size());
             resume.getSections().forEach((key, value) -> {
                 write(dos, key.name());
-                AbstractSection as = resume.getSections().get(key);
                 switch (key) {
                     case OBJECTIVE:
                     case PERSONAL:
-                        writeTextSection(dos, as);
+                        writeTextSection(dos, value);
                         break;
                     case ACHIEVEMENT:
                     case QUALIFICATIONS:
-                        writeListSection(dos, as);
+                        writeListSection(dos, value);
                         break;
                     case EXPERIENCE:
                     case EDUCATION:
-                        writeOrgSection(dos, as);
+                        writeOrgSection(dos, value);
                 }
             });
         }
