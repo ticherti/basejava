@@ -27,16 +27,20 @@ public class DataStreamStrategy implements SerializeStrategy {
 
             dos.writeInt(resume.getSections().size());
             resume.getSections().forEach((key, value) -> {
-                AbstractSection as = resume.getSections().get(key);
-                Class<? extends AbstractSection> asClass = as.getClass();
-                write(dos, asClass.getName());
                 write(dos, key.name());
-                if (asClass == TextSection.class) {
-                    writeTextSection(dos, as);
-                } else if (asClass == ListSection.class) {
-                    writeListSection(dos, as);
-                } else if (asClass == OrganizationSection.class){
-                    writeOrgSection(dos, as);
+                AbstractSection as = resume.getSections().get(key);
+                switch (key) {
+                    case OBJECTIVE:
+                    case PERSONAL:
+                        writeTextSection(dos, as);
+                        break;
+                    case ACHIEVEMENT:
+                    case QUALIFICATIONS:
+                        writeListSection(dos, as);
+                        break;
+                    case EXPERIENCE:
+                    case EDUCATION:
+                        writeOrgSection(dos, as);
                 }
             });
         }
@@ -54,14 +58,19 @@ public class DataStreamStrategy implements SerializeStrategy {
             }
             size = dis.readInt();
             for (int i = 0; i < size; i++) {
-                String abstractSection = dis.readUTF();
                 SectionType st = SectionType.valueOf(dis.readUTF());
-                if (abstractSection.equals(TextSection.class.getName())) {
-                    readTextSection(dis, st);
-                } else if (abstractSection.equals(ListSection.class.getName())) {
-                    readListSection(dis, st);
-                } else {
-                    readOrgSection(dis, st);
+                switch (st) {
+                    case OBJECTIVE:
+                    case PERSONAL:
+                        readTextSection(dis, st);
+                        break;
+                    case ACHIEVEMENT:
+                    case QUALIFICATIONS:
+                        readListSection(dis, st);
+                        break;
+                    case EXPERIENCE:
+                    case EDUCATION:
+                        readOrgSection(dis, st);
                 }
             }
             return resume;
@@ -132,7 +141,7 @@ public class DataStreamStrategy implements SerializeStrategy {
     }
 
     private void readTextSection(DataInputStream dis, SectionType st) throws IOException {
-        resume.addSection(st, new TextSection(dis.readUTF()));
+        resume.addSection(st, new TextSection(read(dis)));
     }
 
     private void readListSection(DataInputStream dis, SectionType st) throws IOException {
@@ -148,7 +157,7 @@ public class DataStreamStrategy implements SerializeStrategy {
         List<Organization> list = new ArrayList<>();
         int size = dis.readInt();
         for (int i = 0; i < size; i++) {
-            list.add(new Organization(dis.readUTF(), dis.readUTF(), readPosition(dis, dis.readInt())));
+            list.add(new Organization(read(dis), dis.readUTF(), readPosition(dis, dis.readInt())));
         }
         resume.addSection(st, new OrganizationSection(list));
     }
@@ -156,7 +165,7 @@ public class DataStreamStrategy implements SerializeStrategy {
     private List<Organization.Position> readPosition(DataInputStream dis, int size) throws IOException {
         List<Organization.Position> positions = new ArrayList<>();
         for (int i = 0; i < size; i++) {
-            positions.add(new Organization.Position(YearMonth.parse(dis.readUTF()), YearMonth.parse(dis.readUTF()), dis.readUTF(), read(dis)));
+            positions.add(new Organization.Position(YearMonth.parse(read(dis)), YearMonth.parse(read(dis)), read(dis), read(dis)));
         }
         return positions;
     }
