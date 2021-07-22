@@ -60,13 +60,12 @@ public class DataStreamStrategy implements SerializeStrategy {
         try (DataInputStream dis = new DataInputStream(is)) {
             resume = new Resume(dis.readUTF(), dis.readUTF());
 
-            int size = dis.readInt();
-            for (int i = 0; i < size; i++) {
+            readWithException(dis, (i) -> {
                 ContactType cType = ContactType.valueOf(read(dis));
                 resume.addContact(cType, readLink(dis));
-            }
-            size = dis.readInt();
-            for (int i = 0; i < size; i++) {
+            });
+
+            readWithException(dis, (i) -> {
                 SectionType st = SectionType.valueOf(dis.readUTF());
                 switch (st) {
                     case OBJECTIVE:
@@ -81,7 +80,7 @@ public class DataStreamStrategy implements SerializeStrategy {
                     case EDUCATION:
                         readOrgSection(dis, st);
                 }
-            }
+            });
             return resume;
         }
     }
@@ -92,6 +91,7 @@ public class DataStreamStrategy implements SerializeStrategy {
             action.accept(o);
         }
     }
+
     private void write(DataOutputStream dos, String s) throws IOException {
         if (s != null) {
             dos.writeUTF(s);
@@ -128,10 +128,10 @@ public class DataStreamStrategy implements SerializeStrategy {
         dos.writeInt(list.size());
         writeWithException(list, p -> {
             Organization.Position position = (Organization.Position) p;
-                write(dos, position.getPeriodStart().toString());
-                write(dos, position.getPeriodFinish().toString());
-                write(dos, position.getName());
-                write(dos, position.getDescription());
+            write(dos, position.getPeriodStart().toString());
+            write(dos, position.getPeriodFinish().toString());
+            write(dos, position.getName());
+            write(dos, position.getDescription());
         });
     }
 
@@ -150,25 +150,27 @@ public class DataStreamStrategy implements SerializeStrategy {
 
     private void readListSection(DataInputStream dis, SectionType st) throws IOException {
         List<String> list = new ArrayList<>();
-        readWithException(dis.readInt(), (i -> list.add(dis.readUTF())));
+        readWithException(dis, (i -> list.add(dis.readUTF())));
         resume.addSection(st, new ListSection(list));
     }
 
     private void readOrgSection(DataInputStream dis, SectionType st) throws IOException {
         List<Organization> list = new ArrayList<>();
-        readWithException(dis.readInt(), (i -> list.add(new Organization(read(dis), read(dis), readPosition(dis)))));
+        readWithException(dis, (i -> list.add(new Organization(read(dis), read(dis), readPosition(dis)))));
         resume.addSection(st, new OrganizationSection(list));
     }
 
     private List<Organization.Position> readPosition(DataInputStream dis) throws IOException {
         List<Organization.Position> positions = new ArrayList<>();
-        readWithException(dis.readInt(), (i -> positions.add(new Organization.Position(YearMonth.parse(read(dis)), YearMonth.parse(read(dis)), read(dis), read(dis)))));
+        readWithException(dis, (i -> positions.add(new Organization.Position(YearMonth.parse(read(dis)), YearMonth.parse(read(dis)), read(dis), read(dis)))));
         return positions;
     }
-        private void readWithException(int size, Consumer action) throws IOException {
-            for (int i = 0; i < size; i++) {
-                action.accept(i);
-            }
+
+    private void readWithException(DataInputStream dis, Consumer action) throws IOException {
+        int size = dis.readInt();
+        for (int i = 0; i < size; i++) {
+            action.accept(i);
         }
+    }
 
 }
