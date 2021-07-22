@@ -20,9 +20,8 @@ public class DataStreamStrategy implements SerializeStrategy {
 
             write(dos, resume.getFullName());
             write(dos, resume.getUuid());
-            Set set = resume.getContacts().entrySet();
-            dos.writeInt(set.size());
-            writeWithException(set, (o -> {
+
+            writeWithException(dos, resume.getContacts().entrySet(), (o -> {
                 Map.Entry<ContactType, Link> entry = (Map.Entry<ContactType, Link>) o;
                 ContactType key = entry.getKey();
                 Link value = entry.getValue();
@@ -30,10 +29,7 @@ public class DataStreamStrategy implements SerializeStrategy {
                 writeLink(dos, value);
             }));
 
-            set = resume.getSections().entrySet();
-            dos.writeInt(set.size());
-
-            writeWithException(set, (o -> {
+            writeWithException(dos, resume.getSections().entrySet(), (o -> {
                 Map.Entry<SectionType, AbstractSection> entry = (Map.Entry<SectionType, AbstractSection>) o;
                 SectionType key = entry.getKey();
                 AbstractSection value = entry.getValue();
@@ -85,8 +81,9 @@ public class DataStreamStrategy implements SerializeStrategy {
         }
     }
 
-    void writeWithException(Collection c, Consumer action) throws IOException {
+    void writeWithException(DataOutputStream dos, Collection c, Consumer action) throws IOException {
         Objects.requireNonNull(action);
+        dos.writeInt(c.size());
         for (Object o : c) {
             action.accept(o);
         }
@@ -110,23 +107,20 @@ public class DataStreamStrategy implements SerializeStrategy {
     }
 
     private void writeListSection(DataOutputStream dos, AbstractSection as) throws IOException {
-        Collection list = ((ListSection) as).getLines();
-        dos.writeInt(list.size());
-        writeWithException(list, s -> write(dos, (String) s));
+        Collection<String> list = ((ListSection) as).getLines();
+        writeWithException(dos, list, s -> write(dos, (String) s));
     }
 
     private void writeOrgSection(DataOutputStream dos, AbstractSection as) throws IOException {
-        Collection list = ((OrganizationSection) as).getOrganizations();
-        dos.writeInt(list.size());
-        writeWithException(list, organization -> writeOrganization(dos, (Organization) organization));
+        Collection<Organization> list = ((OrganizationSection) as).getOrganizations();
+        writeWithException(dos, list, organization -> writeOrganization(dos, (Organization) organization));
     }
 
     private void writeOrganization(DataOutputStream dos, Organization o) throws IOException {
         writeLink(dos, o.getPlaceName());
 
-        Collection list = o.getPositions();
-        dos.writeInt(list.size());
-        writeWithException(list, p -> {
+        Collection<Organization.Position> list = o.getPositions();
+        writeWithException(dos, list, p -> {
             Organization.Position position = (Organization.Position) p;
             write(dos, position.getPeriodStart().toString());
             write(dos, position.getPeriodFinish().toString());
