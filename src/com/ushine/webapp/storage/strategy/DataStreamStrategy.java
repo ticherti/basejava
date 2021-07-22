@@ -161,7 +161,7 @@ public class DataStreamStrategy implements SerializeStrategy {
         List<Organization> list = new ArrayList<>();
         int size = dis.readInt();
         for (int i = 0; i < size; i++) {
-            list.add(new Organization(read(dis), dis.readUTF(), readPosition(dis, dis.readInt())));
+            list.add(new Organization(read(dis), read(dis), readPosition(dis, dis.readInt())));
         }
         resume.addSection(st, new OrganizationSection(list));
     }

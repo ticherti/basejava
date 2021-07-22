@@ -95,7 +95,7 @@ public class ResumeTestData {
         List<Organization.Position> positions = new ArrayList<>();
         positions.add(new Organization.Position(YearMonth.parse("2013-10"), null, "Автор проекта.", "Создание, организация и проведение Java онлайн проектов и стажировок."));
 
-        Organization newOrg = new Organization("Java Online Projects", "", positions);
+        Organization newOrg = new Organization(new Link("Java Online Projects"), positions);
 
         List<Organization> list = new ArrayList<>();
         list.add(newOrg);
