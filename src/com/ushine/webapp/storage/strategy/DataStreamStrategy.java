@@ -22,11 +22,11 @@ public class DataStreamStrategy implements SerializeStrategy {
             write(dos, resume.getUuid());
 
             writeWithException(dos, resume.getContacts().entrySet(), (o -> {
-                Map.Entry<ContactType, Link> entry = (Map.Entry<ContactType, Link>) o;
+                Map.Entry<ContactType, String> entry = (Map.Entry<ContactType, String>) o;
                 ContactType key = entry.getKey();
-                Link value = entry.getValue();
+                String value = entry.getValue();
                 dos.writeUTF(key.name());
-                writeLink(dos, value);
+                write(dos, value);
             }));
 
             writeWithException(dos, resume.getSections().entrySet(), (o -> {
@@ -56,10 +56,7 @@ public class DataStreamStrategy implements SerializeStrategy {
         try (DataInputStream dis = new DataInputStream(is)) {
             resume = new Resume(dis.readUTF(), dis.readUTF());
 
-            readWithException(dis, (i) -> {
-                ContactType cType = ContactType.valueOf(read(dis));
-                resume.addContact(cType, readLink(dis));
-            });
+            readWithException(dis, (i) -> resume.addContact(ContactType.valueOf(read(dis)), read(dis)));
 
             readWithException(dis, (i) -> {
                 SectionType st = SectionType.valueOf(dis.readUTF());
@@ -97,11 +94,6 @@ public class DataStreamStrategy implements SerializeStrategy {
         }
     }
 
-    private void writeLink(DataOutputStream dos, Link link) throws IOException {
-        write(dos, link.getName());
-        write(dos, link.getUrl());
-    }
-
     private void writeTextSection(DataOutputStream dos, AbstractSection as) throws IOException {
         write(dos, ((TextSection) as).getText());
     }
@@ -117,7 +109,8 @@ public class DataStreamStrategy implements SerializeStrategy {
     }
 
     private void writeOrganization(DataOutputStream dos, Organization o) throws IOException {
-        writeLink(dos, o.getPlaceName());
+        write(dos, o.getPlaceName().getName());
+        write(dos, o.getPlaceName().getUrl());
 
         Collection<Organization.Position> list = o.getPositions();
         writeWithException(dos, list, p -> {
@@ -132,10 +125,6 @@ public class DataStreamStrategy implements SerializeStrategy {
     private String read(DataInputStream dis) throws IOException {
         String s = dis.readUTF();
         return s.equals("") ? null : s;
-    }
-
-    private Link readLink(DataInputStream dis) throws IOException {
-        return new Link(read(dis), read(dis));
     }
 
     private void readTextSection(DataInputStream dis, SectionType st) throws IOException {

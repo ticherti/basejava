@@ -34,13 +34,13 @@ public class ResumeTestData {
     }
 
     public static void fillContacts(Resume resume) {
-        resume.getContacts().put(ContactType.PHONENUMBER, new Link("+7(921) 855-0482"));
-        resume.getContacts().put(ContactType.SKYPE, new Link("grigory.kislin", "skype:grigory.kislin"));
-        resume.getContacts().put(ContactType.EMAIL, new Link("gkislin@yandex.ru", "mailto:gkislin@yandex.ru"));
-        resume.getContacts().put(ContactType.LINKEDIN, new Link("https://www.linkedin.com/in/gkislin"));
-        resume.getContacts().put(ContactType.GITHUB, new Link("https://github.com/gkislin"));
-        resume.getContacts().put(ContactType.STACKOVERFLOW, new Link("https://stackoverflow.com/users/548473"));
-        resume.getContacts().put(ContactType.HOMEPAGE, new Link("http://gkislin.ru/"));
+        resume.getContacts().put(ContactType.PHONENUMBER, "+7(921) 855-0482");
+        resume.getContacts().put(ContactType.SKYPE, "skype:grigory.kislin");
+        resume.getContacts().put(ContactType.EMAIL, "mailto:gkislin@yandex.ru");
+        resume.getContacts().put(ContactType.LINKEDIN, "https://www.linkedin.com/in/gkislin");
+        resume.getContacts().put(ContactType.GITHUB, "https://github.com/gkislin");
+        resume.getContacts().put(ContactType.STACKOVERFLOW, "https://stackoverflow.com/users/548473");
+        resume.getContacts().put(ContactType.HOMEPAGE, "http://gkislin.ru/");
     }
 
     public static void fillSections(Resume resume) {
@@ -118,10 +118,10 @@ public class ResumeTestData {
     }
 
     public static void printContacts(Resume resume) {
-        for (Map.Entry<ContactType, Link> entry : resume.getContacts().entrySet()
+        for (Map.Entry<ContactType, String> entry : resume.getContacts().entrySet()
         ) {
             System.out.println(entry.getKey().getTitle());
-            System.out.println(entry.getValue().toString());
+            System.out.println(entry.getValue());
         }
     }
 }
