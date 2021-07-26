@@ -18,19 +18,15 @@ public class DataStreamStrategy implements SerializeStrategy {
             write(dos, resume.getUuid());
 
             writeWithException(dos, resume.getContacts().entrySet(), (o -> {
-                Map.Entry<ContactType, String> entry = (Map.Entry<ContactType, String>) o;
-                ContactType key = entry.getKey();
-                String value = entry.getValue();
-                dos.writeUTF(key.name());
-                write(dos, value);
+                dos.writeUTF(o.getKey().name());
+                write(dos, o.getValue());
             }));
 
             writeWithException(dos, resume.getSections().entrySet(), (o -> {
-                Map.Entry<SectionType, AbstractSection> entry = (Map.Entry<SectionType, AbstractSection>) o;
-                SectionType key = entry.getKey();
-                AbstractSection value = entry.getValue();
+                SectionType key = o.getKey();
+                AbstractSection value = o.getValue();
                 write(dos, key.name());
-                switch (key) {
+                switch (o.getKey()) {
                     case OBJECTIVE:
                     case PERSONAL:
                         writeTextSection(dos, value);
@@ -74,7 +70,7 @@ public class DataStreamStrategy implements SerializeStrategy {
         }
     }
 
-    private <T> void writeWithException (DataOutputStream dos, Collection<T> c, Writer writer) throws IOException {
+    private <T> void writeWithException (DataOutputStream dos, Collection<T> c, Writer<T> writer) throws IOException {
         Objects.requireNonNull(writer);
         dos.writeInt(c.size());
         for (T t : c) {
@@ -92,12 +88,12 @@ public class DataStreamStrategy implements SerializeStrategy {
 
     private void writeListSection(DataOutputStream dos, AbstractSection as) throws IOException {
         Collection<String> list = ((ListSection) as).getLines();
-        writeWithException(dos, list, s -> write(dos, (String) s));
+        writeWithException(dos, list, s -> write(dos, s));
     }
 
     private void writeOrgSection(DataOutputStream dos, AbstractSection as) throws IOException {
         Collection<Organization> list = ((OrganizationSection) as).getOrganizations();
-        writeWithException(dos, list, organization -> writeOrganization(dos, (Organization) organization));
+        writeWithException(dos, list, organization -> writeOrganization(dos, organization));
     }
 
     private void writeOrganization(DataOutputStream dos, Organization o) throws IOException {
@@ -106,11 +102,10 @@ public class DataStreamStrategy implements SerializeStrategy {
 
         Collection<Organization.Position> list = o.getPositions();
         writeWithException(dos, list, p -> {
-            Organization.Position position = (Organization.Position) p;
-            write(dos, position.getPeriodStart().toString());
-            write(dos, position.getPeriodFinish().toString());
-            write(dos, position.getName());
-            write(dos, position.getDescription());
+            write(dos, p.getPeriodStart().toString());
+            write(dos, p.getPeriodFinish().toString());
+            write(dos, p.getName());
+            write(dos, p.getDescription());
         });
     }
 
