@@ -9,10 +9,6 @@ import java.util.*;
 public class DataStreamStrategy implements SerializeStrategy {
     Resume resume;
 
-    public interface Consumer {
-        void accept(Object o) throws IOException;
-    }
-
     @Override
     public void doWrite(Resume resume, OutputStream os) throws IOException {
         this.resume = resume;
@@ -56,9 +52,9 @@ public class DataStreamStrategy implements SerializeStrategy {
         try (DataInputStream dis = new DataInputStream(is)) {
             resume = new Resume(dis.readUTF(), dis.readUTF());
 
-            readWithException(dis, (i) -> resume.addContact(ContactType.valueOf(read(dis)), read(dis)));
+            readWithException(dis, () -> resume.addContact(ContactType.valueOf(read(dis)), read(dis)));
 
-            readWithException(dis, (i) -> {
+            readWithException(dis, () -> {
                 SectionType st = SectionType.valueOf(dis.readUTF());
                 switch (st) {
                     case OBJECTIVE:
@@ -78,20 +74,16 @@ public class DataStreamStrategy implements SerializeStrategy {
         }
     }
 
-    void writeWithException(DataOutputStream dos, Collection c, Consumer action) throws IOException {
-        Objects.requireNonNull(action);
+    private <T> void writeWithException (DataOutputStream dos, Collection<T> c, Writer writer) throws IOException {
+        Objects.requireNonNull(writer);
         dos.writeInt(c.size());
-        for (Object o : c) {
-            action.accept(o);
+        for (T t : c) {
+            writer.write(t);
         }
     }
 
     private void write(DataOutputStream dos, String s) throws IOException {
-        if (s != null) {
-            dos.writeUTF(s);
-        } else {
-            dos.writeUTF("");
-        }
+        dos.writeUTF(s != null ? s : "");
     }
 
     private void writeTextSection(DataOutputStream dos, AbstractSection as) throws IOException {
@@ -133,27 +125,33 @@ public class DataStreamStrategy implements SerializeStrategy {
 
     private void readListSection(DataInputStream dis, SectionType st) throws IOException {
         List<String> list = new ArrayList<>();
-        readWithException(dis, (i -> list.add(dis.readUTF())));
+        readWithException(dis, (() -> list.add(dis.readUTF())));
         resume.addSection(st, new ListSection(list));
     }
 
     private void readOrgSection(DataInputStream dis, SectionType st) throws IOException {
         List<Organization> list = new ArrayList<>();
-        readWithException(dis, (i -> list.add(new Organization(read(dis), read(dis), readPosition(dis)))));
+        readWithException(dis, (() -> list.add(new Organization(read(dis), read(dis), readPosition(dis)))));
         resume.addSection(st, new OrganizationSection(list));
     }
 
     private List<Organization.Position> readPosition(DataInputStream dis) throws IOException {
         List<Organization.Position> positions = new ArrayList<>();
-        readWithException(dis, (i -> positions.add(new Organization.Position(YearMonth.parse(read(dis)), YearMonth.parse(read(dis)), read(dis), read(dis)))));
+        readWithException(dis, (() -> positions.add(new Organization.Position(YearMonth.parse(read(dis)), YearMonth.parse(read(dis)), read(dis), read(dis)))));
         return positions;
     }
 
-    private void readWithException(DataInputStream dis, Consumer action) throws IOException {
+    private void readWithException(DataInputStream dis, Reader reader) throws IOException {
         int size = dis.readInt();
         for (int i = 0; i < size; i++) {
-            action.accept(i);
+            reader.read();
         }
     }
 
+    private  interface Writer<T> {
+        void write(T t) throws IOException;
+    }
+    private  interface Reader {
+        void read() throws IOException;
+    }
 }
