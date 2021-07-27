@@ -1,8 +1,8 @@
 package com.ushine.webapp;
 
 public class MainDeadLock {
-    static final Object lock1 = "lock 1";
-    static final Object lock2 = "lock 2";
+    private static final Object lock1 = "lock 1";
+    private static final Object lock2 = "lock 2";
 
     public static void main(String[] args) {
         new Thread(() -> lockThem(lock1, lock2)).start();
