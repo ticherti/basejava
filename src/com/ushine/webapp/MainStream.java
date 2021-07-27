@@ -10,7 +10,7 @@ import static java.util.stream.Collectors.partitioningBy;
 public class MainStream {
     public static void main(String[] args) {
         System.out.println("Yeah, babe. I'm a mainstream");
-        int[] test = new int[]{1, 6, 6, 8, 2, 8, 7, 3,7};
+        int[] test = new int[]{1, 5, 5, 8, 2, 8, 7, 3};
 
         List<Integer> list = Arrays.stream(test).boxed().collect(Collectors.toList());
         System.out.println();
@@ -36,26 +36,30 @@ public class MainStream {
 
     private static List<Integer> oddOrEvenOn(List<Integer> integers) {
         final int sum = integers.stream().reduce(0, Integer::sum);
-        if (sum % 2 == 0) {
-            return integers.stream().filter(i -> i % 2 != 0).collect(Collectors.toList());
-        } else return integers.stream().filter(i -> i % 2 == 0).collect(Collectors.toList());
+        if (isEven(sum)) {
+            return integers.stream().filter(i -> !isEven(i)).collect(Collectors.toList());
+        } else return integers.stream().filter(i -> isEven(i)).collect(Collectors.toList());
     }
 
     private static List<Integer> oddOrEvenOn2(List<Integer> integers) {
         return integers
                 .stream()
-                .filter(i -> i % 2 != 0 && integers.stream().reduce(0, Integer::sum) % 2 == 0 ||
-                        i % 2 == 0 && integers.stream().reduce(0, Integer::sum) % 2 != 0)
+                .filter(i -> !isEven(i) && isEven(integers.stream().reduce(0, Integer::sum))||
+                        isEven(i) && !isEven(integers.stream().reduce(0, Integer::sum)))
                 .collect(Collectors.toList());
     }
 
     private static List<Integer> oddOrEvenOnOneLine(List<Integer> integers) {
-        return integers.stream().collect(Collectors.groupingBy(i -> i % 2 == 0)).get(integers.stream().reduce(0, Integer::sum)%2 !=0);
+        return integers.stream().collect(Collectors.groupingBy(MainStream::isEven)).get(!isEven(integers.stream().reduce(0, Integer::sum)));
     }
 
     private static List<Integer> oddOrEven(List<Integer> integers) {
-        Map<Boolean, List<Integer>> map = integers.stream().collect(partitioningBy(i -> i % 2 == 0));
+        Map<Boolean, List<Integer>> map = integers.stream().collect(partitioningBy(MainStream::isEven));
         List<Integer> list = map.get(false);
-        return list.size() % 2 == 0 ? list : map.get(true);
+        return isEven(list.size()) ? list : map.get(true);
+    }
+
+    private static Boolean isEven(Integer i) {
+        return i % 2 == 0;
     }
 }
