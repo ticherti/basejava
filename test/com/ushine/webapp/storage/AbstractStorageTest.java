@@ -4,6 +4,7 @@ import com.ushine.webapp.ResumeTestData;
 import com.ushine.webapp.exception.ExistStorageException;
 import com.ushine.webapp.exception.NotExistStorageException;
 import com.ushine.webapp.model.Resume;
+import com.ushine.webapp.util.Config;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -13,7 +14,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 public abstract class AbstractStorageTest {
-    protected static final File STORAGE_DIR = new File("G:\\Projects\\basejava\\Storage");
+    protected static final File STORAGE_DIR = Config.getInstance().getStorageDir();
     protected Storage storage;
 
     private static final String UUID_1 = "uuid1";
@@ -24,6 +25,7 @@ public abstract class AbstractStorageTest {
     protected static final Resume R_1 = ResumeTestData.getResume("3", UUID_1);
     protected static final Resume R_2 = ResumeTestData.getResume("2", UUID_2);
     protected static final Resume R_3 = ResumeTestData.getResume("2", UUID_3);
+    protected static final Resume R_31 = ResumeTestData.getResume("31", UUID_3);
     private static final Resume R_4 = ResumeTestData.getResume("4", UUID_4);
 
     public AbstractStorageTest(Storage storage) {
@@ -59,8 +61,8 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void update() {
-        storage.update(R_3);
-        assertEquals(R_3, storage.get(UUID_3));
+        storage.update(R_31);
+        assertEquals(R_31, storage.get(UUID_3));
     }
 
     @Test(expected = NotExistStorageException.class)
