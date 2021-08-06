@@ -1,5 +1,6 @@
 package com.ushine.webapp.storage;
 
+import com.ushine.webapp.exception.ExistStorageException;
 import com.ushine.webapp.exception.NotExistStorageException;
 import com.ushine.webapp.exception.StorageException;
 import com.ushine.webapp.model.Resume;
@@ -18,13 +19,18 @@ public class SqlStorage implements Storage {
 
     @Override
     public void save(Resume r) {
-        helper.doIt("INSERT INTO resume (uuid, full_name) VALUES (?,?)", (ps) -> {
-            ps.setString(1, r.getUuid());
-            ps.setString(2, r.getFullName());
-            ps.execute();
-//            System.out.println(ps.getResultSet());
-            return null;
-        });
+        try {
+            get(r.getUuid());
+            throw new ExistStorageException(r.getUuid());
+        }
+        catch (NotExistStorageException e){
+            helper.doIt("INSERT INTO resume (uuid, full_name) VALUES (?,?)", (ps) -> {
+                ps.setString(1, r.getUuid());
+                ps.setString(2, r.getFullName());
+                ps.execute();
+                return null;
+            });
+        }
     }
 
     @Override
@@ -53,11 +59,13 @@ public class SqlStorage implements Storage {
 
     @Override
     public void delete(String uuid) {
-        helper.doIt("DELETE FROM resume WHERE uuid =?", (ps) -> {
+        int affectedLines = (int) helper.doIt("DELETE FROM resume WHERE uuid =?", (ps) -> {
             ps.setString(1, uuid);
-            ps.execute();
-            return null;
+            return ps.executeUpdate();
         });
+        if (affectedLines == 0){
+            throw new NotExistStorageException(uuid);
+        }
     }
 
     @Override
