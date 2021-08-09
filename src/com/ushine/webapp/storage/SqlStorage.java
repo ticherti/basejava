@@ -1,10 +1,8 @@
 package com.ushine.webapp.storage;
 
-import com.ushine.webapp.exception.ExistStorageException;
 import com.ushine.webapp.exception.NotExistStorageException;
-import com.ushine.webapp.exception.StorageException;
 import com.ushine.webapp.model.Resume;
-import com.ushine.webapp.sql.ConnectionFactory;
+import com.ushine.webapp.sql.SqlHelper;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -19,23 +17,17 @@ public class SqlStorage implements Storage {
 
     @Override
     public void save(Resume r) {
-        try {
-            get(r.getUuid());
-            throw new ExistStorageException(r.getUuid());
-        }
-        catch (NotExistStorageException e){
-            helper.doIt("INSERT INTO resume (uuid, full_name) VALUES (?,?)", (ps) -> {
+            helper.executeQuery("INSERT INTO resume (uuid, full_name) VALUES (?,?)", (ps) -> {
                 ps.setString(1, r.getUuid());
                 ps.setString(2, r.getFullName());
                 ps.execute();
                 return null;
             });
-        }
     }
 
     @Override
     public Resume get(String uuid) {
-        return (Resume) helper.doIt("SELECT * FROM resume r WHERE r.uuid =?", (ps) -> {
+        return helper.executeQuery("SELECT * FROM resume r WHERE r.uuid =?", (ps) -> {
             ps.setString(1, uuid);
             ResultSet rs = ps.executeQuery();
             if (!rs.next()) {
@@ -47,11 +39,12 @@ public class SqlStorage implements Storage {
 
     @Override
     public void update(Resume r) {
-        helper.doIt("UPDATE resume SET full_name =? WHERE uuid=?", (ps) -> {
+        helper.executeQuery("UPDATE resume SET full_name =? WHERE uuid=?", (ps) -> {
+            String uuid = r.getUuid();
             ps.setString(1, r.getFullName());
-            ps.setString(2, r.getUuid());
+            ps.setString(2, uuid);
             if (ps.executeUpdate() == 0) {
-                throw new NotExistStorageException(r.getUuid());
+                throw new NotExistStorageException(uuid);
             }
             return null;
         });
@@ -59,18 +52,17 @@ public class SqlStorage implements Storage {
 
     @Override
     public void delete(String uuid) {
-        int affectedLines = (int) helper.doIt("DELETE FROM resume WHERE uuid =?", (ps) -> {
+        if (helper.executeQuery("DELETE FROM resume WHERE uuid =?", (ps) -> {
             ps.setString(1, uuid);
             return ps.executeUpdate();
-        });
-        if (affectedLines == 0){
+        }) == 0) {
             throw new NotExistStorageException(uuid);
         }
     }
 
     @Override
     public List<Resume> getAllSorted() {
-        return (List<Resume>) helper.doIt("SELECT * FROM resume ORDER BY full_name", (ps) -> {
+        return helper.executeQuery("SELECT * FROM resume ORDER BY full_name, uuid;", (ps) -> {
             List<Resume> list = new ArrayList<>();
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -82,43 +74,17 @@ public class SqlStorage implements Storage {
 
     @Override
     public int size() {
-        return (int) helper.doIt("SELECT count(*) FROM resume r ", (ps) -> {
+        return helper.executeQuery("SELECT count(*) FROM resume r ", (ps) -> {
             ResultSet rs = ps.executeQuery();
-            int count = 0;
-            while (rs.next()) {
-                count = rs.getInt(1);
-            }
-            return count;
+            return rs.next() ? rs.getInt(1) : 0;
         });
     }
 
     @Override
     public void clear() {
-        helper.doIt("DELETE FROM resume", (ps) -> {
+        helper.executeQuery("DELETE FROM resume", (ps) -> {
             ps.execute();
             return null;
         });
-    }
-
-    static class SqlHelper<T> {
-        public final ConnectionFactory connectionFactory;
-
-        public SqlHelper(String dbUrl, String dbUser, String dbPassword) {
-            connectionFactory = () -> DriverManager.getConnection(dbUrl, dbUser, dbPassword);
-        }
-
-        private T doIt(String query, CodeBlock<T> code) {
-            try (Connection connection = connectionFactory.getConnection();
-                 PreparedStatement ps = connection.prepareStatement(query)) {
-                return code.execute(ps);
-            } catch (SQLException e) {
-                throw new StorageException(e);
-            }
-        }
-    }
-
-    @FunctionalInterface
-    private interface CodeBlock<T> {
-        T execute(PreparedStatement ps) throws SQLException;
     }
 }

@@ -11,16 +11,18 @@ import org.junit.Test;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.Assert.*;
+
 public abstract class AbstractStorageTest {
     protected static final File STORAGE_DIR = Config.getInstance().getStorageDir();
     protected Storage storage;
 
-    private static final String UUID_1 = "uuid1";
-    private static final String UUID_2 = "uuid2";
-    private static final String UUID_3 = "uuid3";
-    private static final String UUID_4 = "uuid4";
+    private static final String UUID_1 = UUID.randomUUID().toString();
+    private static final String UUID_2 = UUID.randomUUID().toString();
+    private static final String UUID_3 = UUID.randomUUID().toString();
+    private static final String UUID_4 = UUID.randomUUID().toString();
 
     protected static final Resume R_1 = ResumeTestData.getResume("3", UUID_1);
     protected static final Resume R_2 = ResumeTestData.getResume("2", UUID_2);
@@ -95,8 +97,8 @@ public abstract class AbstractStorageTest {
     @Test
     public void getAll() {
         List<Resume> expected = new ArrayList<Resume>();
-        expected.add(R_2);
-        expected.add(R_3);
+        expected.add(UUID_2.compareTo(UUID_3) > 0 ? R_3 : R_2);
+        expected.add(UUID_2.compareTo(UUID_3) > 0 ? R_2 : R_3);
         expected.add(R_1);
         List<Resume> actual = storage.getAllSorted();
         assertEquals(expected, actual);
