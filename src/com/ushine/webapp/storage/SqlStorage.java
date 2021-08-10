@@ -17,12 +17,12 @@ public class SqlStorage implements Storage {
 
     @Override
     public void save(Resume r) {
-            helper.executeQuery("INSERT INTO resume (uuid, full_name) VALUES (?,?)", (ps) -> {
-                ps.setString(1, r.getUuid());
-                ps.setString(2, r.getFullName());
-                ps.execute();
-                return null;
-            });
+        helper.executeQuery("INSERT INTO resume (uuid, full_name) VALUES (?,?)", (ps) -> {
+            ps.setString(1, r.getUuid());
+            ps.setString(2, r.getFullName());
+            ps.execute();
+            return null;
+        });
     }
 
     @Override
@@ -52,12 +52,13 @@ public class SqlStorage implements Storage {
 
     @Override
     public void delete(String uuid) {
-        if (helper.executeQuery("DELETE FROM resume WHERE uuid =?", (ps) -> {
+        helper.executeQuery("DELETE FROM resume WHERE uuid =?", (ps) -> {
             ps.setString(1, uuid);
-            return ps.executeUpdate();
-        }) == 0) {
-            throw new NotExistStorageException(uuid);
-        }
+            if (ps.executeUpdate() == 0) {
+                throw new NotExistStorageException(uuid);
+            }
+            return null;
+        });
     }
 
     @Override
