@@ -15,20 +15,44 @@ public class SqlHelper {
         connectionFactory = () -> DriverManager.getConnection(dbUrl, dbUser, dbPassword);
     }
 
-    public <T> T executeQuery(String query, CodeBlock<T> code) {
+    public <T> T executeQuery(String query, Executor<T> executor) {
         try (Connection connection = connectionFactory.getConnection();
              PreparedStatement ps = connection.prepareStatement(query)) {
-            return code.execute(ps);
+            return executor.execute(ps);
         } catch (SQLException e) {
-            if (e.getSQLState().equals("23505")){
+            if (e.getSQLState().equals("23505")) {
                 throw new ExistStorageException(e.getMessage());
             }
             throw new StorageException(e);
         }
     }
 
+    public <T> T TransactionalExecuteQuery(SqlTransaction<T> executor) {
+        try (Connection connection = connectionFactory.getConnection()) {
+            try {
+                connection.setAutoCommit(false);
+                T res = executor.execute(connection);
+                connection.commit();
+                return res;
+            } catch (SQLException e) {
+                connection.rollback();
+                if (e.getSQLState().equals("23505")) {
+                    throw new ExistStorageException(e.getMessage());
+                }
+                throw e;
+            }
+        } catch (SQLException e) {
+            throw new StorageException(e);
+        }
+    }
+
     @FunctionalInterface
-    public interface CodeBlock<T> {
+    public interface Executor<T> {
         T execute(PreparedStatement ps) throws SQLException;
+    }
+
+    @FunctionalInterface
+    public interface SqlTransaction<T> {
+        T execute(Connection conn) throws SQLException;
     }
 }
