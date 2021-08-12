@@ -17,8 +17,8 @@ public class SqlStorage implements Storage {
 
     @Override
     public void save(Resume r) {
-        helper.<Void>TransactionalExecuteQuery(conn -> {
-            helper.<Void>executePreparedStatement(conn, "INSERT INTO resume (uuid, full_name) VALUES (?,?)",
+        helper.TransactionalExecuteQuery(conn -> {
+            helper.executePreparedStatement(conn, "INSERT INTO resume (uuid, full_name) VALUES (?,?)",
                     (ps) -> {
                         ps.setString(1, r.getUuid());
                         ps.setString(2, r.getFullName());
@@ -53,8 +53,8 @@ public class SqlStorage implements Storage {
 
     @Override
     public void update(Resume r) {
-        helper.<Void>TransactionalExecuteQuery(conn -> {
-            helper.<Void>executePreparedStatement(conn,
+        helper.TransactionalExecuteQuery(conn -> {
+            helper.executePreparedStatement(conn,
                     "    UPDATE resume " +
                             "SET full_name =? " +
                             "WHERE uuid=?", (ps) -> {
@@ -81,7 +81,7 @@ public class SqlStorage implements Storage {
 
     @Override
     public void delete(String uuid) {
-        helper.<Void>executeQuery("DELETE FROM resume WHERE uuid =?", (ps) -> {
+        helper.executeQuery("DELETE FROM resume WHERE uuid =?", (ps) -> {
             ps.setString(1, uuid);
             if (ps.executeUpdate() == 0) {
                 throw new NotExistStorageException(uuid);
@@ -124,7 +124,7 @@ public class SqlStorage implements Storage {
 
     @Override
     public void clear() {
-        helper.<Void>executeQuery("DELETE FROM resume", (ps) -> {
+        helper.executeQuery("DELETE FROM resume", (ps) -> {
             ps.execute();
             return null;
         });
@@ -138,9 +138,8 @@ public class SqlStorage implements Storage {
     }
 
     private void insertIntoContacts(Resume r, Connection conn) throws SQLException {
-        helper.<Void>executePreparedStatement(conn, "INSERT INTO contact (resume_uuid, type, value) VALUES (?,?,?)", (ps) -> {
-                    for (Map.Entry<ContactType, String> entry : r.getContacts().entrySet()
-                    ) {
+        helper.executePreparedStatement(conn, "INSERT INTO contact (resume_uuid, type, value) VALUES (?,?,?)", (ps) -> {
+                    for (Map.Entry<ContactType, String> entry : r.getContacts().entrySet()) {
                         ps.setString(1, r.getUuid());
                         ps.setString(2, entry.getKey().name());
                         ps.setString(3, entry.getValue());
