@@ -16,9 +16,8 @@ public class SqlHelper {
     }
 
     public <T> T executeQuery(String query, Executor<T> executor) {
-        try (Connection connection = connectionFactory.getConnection();
-             PreparedStatement ps = connection.prepareStatement(query)) {
-            return executor.execute(ps);
+        try (Connection connection = connectionFactory.getConnection()) {
+            return executePreparedStatement(connection, query, executor);
         } catch (SQLException e) {
             if (e.getSQLState().equals("23505")) {
                 throw new ExistStorageException(e.getMessage());
@@ -43,6 +42,12 @@ public class SqlHelper {
             }
         } catch (SQLException e) {
             throw new StorageException(e);
+        }
+    }
+
+    public <T> T executePreparedStatement(Connection conn, String sql, Executor<T> executor) throws SQLException {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            return executor.execute(ps);
         }
     }
 
