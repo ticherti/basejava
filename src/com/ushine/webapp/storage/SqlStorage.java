@@ -59,7 +59,7 @@ public class SqlStorage implements Storage {
         );
     }
 
-    //dry it
+    // Also check if it is not safe to use parameter is sql line?
     @Override
     public void update(Resume r) {
         helper.TransactionalExecuteQuery(conn -> {
@@ -83,38 +83,11 @@ public class SqlStorage implements Storage {
                         return null;
                     }
             );
-            helper.executePreparedStatement(conn,
-                    "    DELETE FROM personal " +
-                            "WHERE resume_uuid=?", (ps) -> {
-                        ps.setString(1, r.getUuid());
-                        ps.execute();
-                        return null;
-                    }
-            );
-            helper.executePreparedStatement(conn,
-                    "    DELETE FROM objective " +
-                            "WHERE resume_uuid=?", (ps) -> {
-                        ps.setString(1, r.getUuid());
-                        ps.execute();
-                        return null;
-                    }
-            );
-            helper.executePreparedStatement(conn,
-                    "    DELETE FROM achievement " +
-                            "WHERE resume_uuid=?", (ps) -> {
-                        ps.setString(1, r.getUuid());
-                        ps.execute();
-                        return null;
-                    }
-            );
-            helper.executePreparedStatement(conn,
-                    "    DELETE FROM qualifications " +
-                            "WHERE resume_uuid=?", (ps) -> {
-                        ps.setString(1, r.getUuid());
-                        ps.execute();
-                        return null;
-                    }
-            );
+            executePreparedStatementDeleteBySectionType(SectionType.PERSONAL, r, conn);
+            executePreparedStatementDeleteBySectionType(SectionType.OBJECTIVE, r, conn);
+            executePreparedStatementDeleteBySectionType(SectionType.ACHIEVEMENT, r, conn);
+            executePreparedStatementDeleteBySectionType(SectionType.QUALIFICATIONS, r, conn);
+
             insertContacts(r, conn);
             insertSections(r, conn);
             return null;
@@ -134,6 +107,7 @@ public class SqlStorage implements Storage {
 
     @Override
     public List<Resume> getAllSorted() {
+        getAllSortedCombineByCode();
         return helper.TransactionalExecuteQuery(conn -> {
                     Map<String, Resume> resumes = helper.executePreparedStatement(conn,
                             "    SELECT * FROM resume r " +
@@ -159,6 +133,52 @@ public class SqlStorage implements Storage {
                     return new ArrayList<>(resumes.values());
                 }
         );
+    }
+
+    public List<Resume> getAllSortedCombineByCode() {
+        return helper.TransactionalExecuteQuery(conn -> {
+            List<Resume> list = helper.executeQuery(
+                    "  SELECT * FROM resume r " +
+                            "ORDER BY full_name, uuid;",
+                    (ps) -> {
+                        List<Resume> resumes = new ArrayList<>();
+                        ResultSet rs = ps.executeQuery();
+                        while (rs.next()) {
+                            resumes.add(new Resume(rs.getString("full_name"), rs.getString("uuid")));
+                        }
+                        return resumes;
+                    });
+            Map<String, Map<ContactType, String>> resumeContacts = helper.executeQuery(
+                    "  SELECT * FROM contact c " +
+                            "ORDER BY resume_uuid",
+                    (ps) -> {
+                        Map<String, Map<ContactType, String>> contacts = new HashMap<>();
+                        ResultSet rs = ps.executeQuery();
+                        String lastUUID = null;
+                        Map<ContactType, String> contactLines;
+                        while (rs.next()) {
+                            String uuid = rs.getString("resume_uuid");
+                            if (!uuid.equals(lastUUID)) {
+                                contacts.put(uuid, new HashMap<>());
+                                lastUUID = uuid;
+                            }
+                            contactLines = contacts.get(uuid);
+                            contactLines.put(ContactType.valueOf(rs.getString("type")), rs.getString("value"));
+                        }
+                        return contacts;
+                    });
+            for (Resume r : list
+            ) {
+                Map<ContactType, String> contactPair = resumeContacts.get(r.getUuid());
+                for (Map.Entry<ContactType, String> entry : contactPair.entrySet()
+                ) {
+                    r.addContact(entry.getKey(), entry.getValue());
+                }
+            }
+
+            return list;
+        });
+
     }
 
     @Override
@@ -220,7 +240,7 @@ public class SqlStorage implements Storage {
 
     private void prepareListSection(ListSection as, Resume r, Connection conn, String query) throws SQLException {
         if (as != null) {
-            String line = as.getLines().stream().collect(Collectors.joining("/n"));
+            String line = String.join("/n", as.getLines());
             helper.executePreparedStatement(conn, query,
                     ps -> {
                         ps.setString(1, r.getUuid());
@@ -244,6 +264,18 @@ public class SqlStorage implements Storage {
                 });
     }
 
+    private void executePreparedStatementDeleteBySectionType(SectionType type, Resume r, Connection conn) throws SQLException {
+        helper.executePreparedStatement(conn,
+                "    DELETE FROM " +
+                        type.name() +
+                        " WHERE resume_uuid=?", (ps) -> {
+                    ps.setString(1, r.getUuid());
+                    ps.execute();
+                    return null;
+                }
+        );
+    }
+
     private void addAllTextSections(SectionType st, Connection conn, Map<String, Resume> resumes) throws SQLException {
         helper.executePreparedStatement(conn,
                 "    SELECT * FROM " +
@@ -256,8 +288,6 @@ public class SqlStorage implements Storage {
                 });
     }
 
-    //check add Contact and sections on value != null repeat. And check if the method should be renamed.
-    // Basically if repeated and is not used in two places it could be renamed and partly inlined
     private void createTextSection(SectionType st, ResultSet rs, Resume resume) throws SQLException {
         String value = rs.getString("value");
         if (value != null) {
@@ -271,9 +301,7 @@ public class SqlStorage implements Storage {
                     List<String> lines = Arrays.stream(rs.getString("value").split("/n")).collect(Collectors.toList());
                     resume.addSection(st, new ListSection(lines));
                     break;
-
             }
         }
     }
-
 }
