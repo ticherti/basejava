@@ -13,7 +13,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class ResumeServlet extends HttpServlet {
-//    private Storage storage;
+    private Storage storage;
+
+    @Override
+    public void init() {
+        storage = Config.getInstance().getSqlStorage();
+    }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) {
 
@@ -28,7 +33,6 @@ public class ResumeServlet extends HttpServlet {
         final String UUID = "uuid";
         Map<String, String[]> parameters = request.getParameterMap();
         PrintWriter writer = response.getWriter();
-        Storage storage = Config.getInstance().getSqlStorage();
         if (parameters.containsKey(UUID) && !request.getParameter(UUID).equals("")) {
             printResume(writer, storage.get(request.getParameter(UUID)));
         } else printAll(writer, storage);

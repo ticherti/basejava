@@ -137,8 +137,8 @@ public class SqlStorage implements Storage {
 
     public List<Resume> getAllSortedCombineByCode() {
         return helper.TransactionalExecuteQuery(conn -> {
-            List<Resume> list = helper.executeQuery(
-                    "  SELECT * FROM resume r " +
+            List<Resume> list = helper.executePreparedStatement(conn,
+                    "    SELECT * FROM resume " +
                             "ORDER BY full_name, uuid;",
                     (ps) -> {
                         List<Resume> resumes = new ArrayList<>();
@@ -148,8 +148,8 @@ public class SqlStorage implements Storage {
                         }
                         return resumes;
                     });
-            Map<String, Map<ContactType, String>> resumeContacts = helper.executeQuery(
-                    "  SELECT * FROM contact c " +
+            Map<String, Map<ContactType, String>> resumeContacts = helper.executePreparedStatement(conn,
+                    "    SELECT * FROM contact " +
                             "ORDER BY resume_uuid",
                     (ps) -> {
                         Map<String, Map<ContactType, String>> contacts = new HashMap<>();
@@ -175,10 +175,8 @@ public class SqlStorage implements Storage {
                     r.addContact(entry.getKey(), entry.getValue());
                 }
             }
-
             return list;
         });
-
     }
 
     @Override
@@ -219,7 +217,6 @@ public class SqlStorage implements Storage {
     }
 
     private void insertSections(Resume r, Connection conn) throws SQLException {
-        //check query parameter as table name
         prepareTextSection(r.getSections().get(SectionType.PERSONAL), r, conn, "INSERT INTO personal (resume_uuid, VALUE) VALUES (?,?)");
         prepareTextSection(r.getSections().get(SectionType.OBJECTIVE), r, conn, "INSERT INTO objective (resume_uuid, VALUE) VALUES (?,?)");
         prepareListSection((ListSection) r.getSections().get(SectionType.ACHIEVEMENT), r, conn, "INSERT INTO achievement (resume_uuid, VALUE) VALUES (?,?)");
