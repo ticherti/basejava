@@ -12,10 +12,19 @@ public class JsonParser {
             .registerTypeAdapter(AbstractSection.class, new JsonSectionAdapter<>())
             .create();
 
-    public static <T> T read (Reader reader, Class<T> clazz){
+    public static <T> T read(Reader reader, Class<T> clazz) {
         return gson.fromJson(reader, clazz);
     }
-    public static <T> void write(T object, Writer writer){
+
+    public static <T> T read(String string, Class<T> clazz) {
+        return gson.fromJson(string, clazz);
+    }
+
+    public static <T> void write(T object, Writer writer) {
         gson.toJson(object, writer);
+    }
+
+    public static <T> String write(T object) {
+        return gson.toJson(object);
     }
 }

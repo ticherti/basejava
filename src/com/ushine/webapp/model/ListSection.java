@@ -26,11 +26,7 @@ public class ListSection extends AbstractSection {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        for (String line : lines) {
-            sb.append(" - ").append(line).append('\n');
-        }
-        return sb.toString();
+        return String.join("/n", getLines());
     }
 
     @Override
