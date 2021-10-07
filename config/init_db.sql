@@ -29,7 +29,7 @@ CREATE
 UNIQUE INDEX contact_uuid_type_index
     ON contact (resume_uuid, type);
 
-create table sections
+create table section
 (
     id          serial   not null
         constraint sections_pk
@@ -42,8 +42,8 @@ create table sections
     value       text     not null
 );
 
-alter table sections owner to postgres;
+alter table section owner to postgres;
 
 create
-unique index sections_type_resume_uuid_uindex
+unique index section_type_resume_uuid_uindex
     on sections (type, resume_uuid);

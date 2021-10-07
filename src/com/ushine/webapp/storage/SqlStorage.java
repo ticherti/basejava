@@ -26,7 +26,7 @@ public class SqlStorage implements Storage {
                         return null;
                     });
             insertContacts(r, conn);
-            insertSections(r, conn);
+            insertSection(r, conn);
             return null;
         });
     }
@@ -51,7 +51,7 @@ public class SqlStorage implements Storage {
                                 return r;
                             });
                     helper.executePreparedStatement(conn,
-                            "    SELECT * FROM sections" +
+                            "    SELECT * FROM section" +
                                     " WHERE resume_uuid =?", (ps) -> {
                                 ps.setString(1, uuid);
                                 ResultSet rs = ps.executeQuery();
@@ -88,9 +88,9 @@ public class SqlStorage implements Storage {
                         return null;
                     }
             );
-            deleteFromSections(r, conn);
+            deleteFromSection(r, conn);
             insertContacts(r, conn);
-            insertSections(r, conn);
+            insertSection(r, conn);
             return null;
         });
     }
@@ -108,35 +108,35 @@ public class SqlStorage implements Storage {
 
     @Override
     public List<Resume> getAllSorted() {
-        getAllSortedCombineByCode();
-        return helper.TransactionalExecuteQuery(conn -> {
-                    Map<String, Resume> resumes = helper.executePreparedStatement(conn,
-                            "    SELECT * FROM resume r " +
-                                    "LEFT JOIN contact c ON r.uuid = c.resume_uuid " +
-                                    "ORDER BY full_name, uuid;",
-                            ps -> {
-                                Map<String, Resume> map = new LinkedHashMap<>();
-                                ResultSet rs = ps.executeQuery();
-                                while (rs.next()) {
-                                    String uuid = rs.getString("uuid");
-                                    if (!map.containsKey(uuid)) {
-                                        map.put(uuid, new Resume(rs.getString("full_name"), uuid));
-                                    }
-                                    addContact(rs, map.get(uuid));
-                                }
-                                return map;
-                            });
-                    helper.executePreparedStatement(conn,
-                            "    SELECT * FROM sections", (ps) -> {
-                                ResultSet rs = ps.executeQuery();
-                                while (rs.next()) {
-                                    addSection(rs, resumes.get(rs.getString("resume_uuid")));
-                                }
-                                return null;
-                            });
-                    return new ArrayList<>(resumes.values());
-                }
-        );
+        return getAllSortedCombineByCode();
+//        return helper.TransactionalExecuteQuery(conn -> {
+//                    Map<String, Resume> resumes = helper.executePreparedStatement(conn,
+//                            "    SELECT * FROM resume r " +
+//                                    "LEFT JOIN contact c ON r.uuid = c.resume_uuid " +
+//                                    "ORDER BY full_name, uuid;",
+//                            ps -> {
+//                                Map<String, Resume> map = new LinkedHashMap<>();
+//                                ResultSet rs = ps.executeQuery();
+//                                while (rs.next()) {
+//                                    String uuid = rs.getString("uuid");
+//                                    if (!map.containsKey(uuid)) {
+//                                        map.put(uuid, new Resume(rs.getString("full_name"), uuid));
+//                                    }
+//                                    addContact(rs, map.get(uuid));
+//                                }
+//                                return map;
+//                            });
+//                    helper.executePreparedStatement(conn,
+//                            "    SELECT * FROM section", (ps) -> {
+//                                ResultSet rs = ps.executeQuery();
+//                                while (rs.next()) {
+//                                    addSection(rs, resumes.get(rs.getString("resume_uuid")));
+//                                }
+//                                return null;
+//                            });
+//                    return new ArrayList<>(resumes.values());
+//                }
+//        );
     }
 
     public List<Resume> getAllSortedCombineByCode() {
@@ -221,10 +221,10 @@ public class SqlStorage implements Storage {
         }
     }
 
-    private void deleteFromSections(Resume r, Connection conn) throws SQLException {
+    private void deleteFromSection(Resume r, Connection conn) throws SQLException {
         helper.executePreparedStatement(conn,
-                "    DELETE FROM sections" +
-                        " WHERE resume_uuid=?", (ps) -> {
+                "    DELETE FROM section " +
+                        "WHERE resume_uuid=?", (ps) -> {
                     ps.setString(1, r.getUuid());
                     ps.execute();
                     return null;
@@ -246,11 +246,11 @@ public class SqlStorage implements Storage {
         );
     }
 
-    private void insertSections(Resume r, Connection conn) throws SQLException {
-        helper.executePreparedStatement(conn, "INSERT INTO sections (resume_uuid, type, value) VALUES (?,?,?)", (ps) -> {
+    private void insertSection(Resume r, Connection conn) throws SQLException {
+        helper.executePreparedStatement(conn, "INSERT INTO section (resume_uuid, type, value) VALUES (?,?,?)", (ps) -> {
                     for (Map.Entry<SectionType, AbstractSection> sectionEntry : r.getSections().entrySet()) {
                         ps.setString(1, r.getUuid());
-                        ps.setString(2, sectionEntry.getKey().toString());
+                        ps.setString(2, sectionEntry.getKey().name());
                         ps.setString(3, JsonParser.write(sectionEntry.getValue()));
                         ps.addBatch();
                     }
