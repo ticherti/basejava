@@ -108,78 +108,37 @@ public class SqlStorage implements Storage {
 
     @Override
     public List<Resume> getAllSorted() {
-        return getAllSortedCombineByCode();
-//        return helper.TransactionalExecuteQuery(conn -> {
-//                    Map<String, Resume> resumes = helper.executePreparedStatement(conn,
-//                            "    SELECT * FROM resume r " +
-//                                    "LEFT JOIN contact c ON r.uuid = c.resume_uuid " +
-//                                    "ORDER BY full_name, uuid;",
-//                            ps -> {
-//                                Map<String, Resume> map = new LinkedHashMap<>();
-//                                ResultSet rs = ps.executeQuery();
-//                                while (rs.next()) {
-//                                    String uuid = rs.getString("uuid");
-//                                    if (!map.containsKey(uuid)) {
-//                                        map.put(uuid, new Resume(rs.getString("full_name"), uuid));
-//                                    }
-//                                    addContact(rs, map.get(uuid));
-//                                }
-//                                return map;
-//                            });
-//                    helper.executePreparedStatement(conn,
-//                            "    SELECT * FROM section", (ps) -> {
-//                                ResultSet rs = ps.executeQuery();
-//                                while (rs.next()) {
-//                                    addSection(rs, resumes.get(rs.getString("resume_uuid")));
-//                                }
-//                                return null;
-//                            });
-//                    return new ArrayList<>(resumes.values());
-//                }
-//        );
-    }
-
-    public List<Resume> getAllSortedCombineByCode() {
         return helper.TransactionalExecuteQuery(conn -> {
-            List<Resume> list = helper.executePreparedStatement(conn,
+            Map<String, Resume> resumes = helper.executePreparedStatement(conn,
                     "    SELECT * FROM resume " +
                             "ORDER BY full_name, uuid;",
                     (ps) -> {
-                        List<Resume> resumes = new ArrayList<>();
+                        Map<String, Resume> map = new LinkedHashMap<>();
                         ResultSet rs = ps.executeQuery();
                         while (rs.next()) {
-                            resumes.add(new Resume(rs.getString("full_name"), rs.getString("uuid")));
+                            map.put(rs.getString("uuid"), new Resume(rs.getString("full_name"), rs.getString("uuid")));
                         }
-                        return resumes;
+                        return map;
                     });
-            Map<String, Map<ContactType, String>> resumeContacts = helper.executePreparedStatement(conn,
-                    "    SELECT * FROM contact " +
-                            "ORDER BY resume_uuid",
+            helper.executePreparedStatement(conn,
+                    "    SELECT * FROM contact ",
                     (ps) -> {
-                        Map<String, Map<ContactType, String>> contacts = new HashMap<>();
                         ResultSet rs = ps.executeQuery();
-                        String lastUUID = null;
-                        Map<ContactType, String> contactLines;
                         while (rs.next()) {
-                            String uuid = rs.getString("resume_uuid");
-                            if (!uuid.equals(lastUUID)) {
-                                contacts.put(uuid, new HashMap<>());
-                                lastUUID = uuid;
-                            }
-                            contactLines = contacts.get(uuid);
-                            contactLines.put(ContactType.valueOf(rs.getString("type")), rs.getString("value"));
+                            addContact(rs, resumes.get(rs.getString("resume_uuid")));
                         }
-                        return contacts;
+                        return null;
                     });
-            for (Resume r : list
-            ) {
-                Map<ContactType, String> contactPair = resumeContacts.get(r.getUuid());
-                for (Map.Entry<ContactType, String> entry : contactPair.entrySet()
-                ) {
-                    r.addContact(entry.getKey(), entry.getValue());
-                }
-            }
-            return list;
+            helper.executePreparedStatement(conn,
+                    "    SELECT * FROM section",
+                    (ps) -> {
+                        ResultSet rs = ps.executeQuery();
+                        while (rs.next()) {
+                            addSection(rs, resumes.get(rs.getString("resume_uuid")));
+                        }
+                        return null;
+                    });
+            return new ArrayList<>(resumes.values());
         });
     }
 
