@@ -11,8 +11,9 @@ import java.util.*;
 public class SqlStorage implements Storage {
     private final SqlHelper helper;
 
-    public SqlStorage(String dbUrl, String dbUser, String dbPassword) {
+    public SqlStorage(String dbUrl, String dbUser, String dbPassword) throws ClassNotFoundException {
         helper = new SqlHelper(dbUrl, dbUser, dbPassword);
+        Class.forName("org.postgresql.Driver");
     }
 
     @Override
@@ -26,7 +27,7 @@ public class SqlStorage implements Storage {
                         return null;
                     });
             insertContacts(r, conn);
-            insertSection(r, conn);
+            insertSections(r, conn);
             return null;
         });
     }
@@ -80,17 +81,10 @@ public class SqlStorage implements Storage {
                         }
                         return null;
                     });
-            helper.executePreparedStatement(conn,
-                    "    DELETE FROM contact " +
-                            "WHERE resume_uuid=?", (ps) -> {
-                        ps.setString(1, r.getUuid());
-                        ps.execute();
-                        return null;
-                    }
-            );
-            deleteFromSection(r, conn);
+            deleteContacts(r, conn);
+            deleteSections(r, conn);
             insertContacts(r, conn);
-            insertSection(r, conn);
+            insertSections(r, conn);
             return null;
         });
     }
@@ -166,7 +160,7 @@ public class SqlStorage implements Storage {
     }
 
     private void addSection(ResultSet rs, Resume resume) throws SQLException {
-        String type = rs.getString("type").trim();
+        String type = rs.getString("type");
         SectionType st = SectionType.valueOf(type);
         switch (st) {
             case PERSONAL:
@@ -180,7 +174,18 @@ public class SqlStorage implements Storage {
         }
     }
 
-    private void deleteFromSection(Resume r, Connection conn) throws SQLException {
+    private void deleteContacts(Resume r, Connection conn) throws SQLException {
+        helper.executePreparedStatement(conn,
+                "    DELETE FROM contact " +
+                        "WHERE resume_uuid=?", (ps) -> {
+                    ps.setString(1, r.getUuid());
+                    ps.execute();
+                    return null;
+                }
+        );
+    }
+
+    private void deleteSections(Resume r, Connection conn) throws SQLException {
         helper.executePreparedStatement(conn,
                 "    DELETE FROM section " +
                         "WHERE resume_uuid=?", (ps) -> {
@@ -205,7 +210,7 @@ public class SqlStorage implements Storage {
         );
     }
 
-    private void insertSection(Resume r, Connection conn) throws SQLException {
+    private void insertSections(Resume r, Connection conn) throws SQLException {
         helper.executePreparedStatement(conn, "INSERT INTO section (resume_uuid, type, value) VALUES (?,?,?)", (ps) -> {
                     for (Map.Entry<SectionType, AbstractSection> sectionEntry : r.getSections().entrySet()) {
                         ps.setString(1, r.getUuid());
