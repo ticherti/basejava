@@ -25,7 +25,6 @@ public abstract class AbstractStorage<SK> implements Storage {
 
     protected abstract List<Resume> getAll();
 
-
     public void save(Resume resume) {
         SK searchKey = getSearchKey(resume.getUuid());
         if (isExist(searchKey)) {
@@ -78,6 +77,5 @@ public abstract class AbstractStorage<SK> implements Storage {
         public int compare(Resume o1, Resume o2) {
             return o1.getUuid().compareTo(o2.getUuid());
         }
-
     }
 }

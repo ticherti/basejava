@@ -11,9 +11,15 @@ import java.util.*;
 public class SqlStorage implements Storage {
     private final SqlHelper helper;
 
-    public SqlStorage(String dbUrl, String dbUser, String dbPassword) throws ClassNotFoundException {
+    public SqlStorage(String dbUrl, String dbUser, String dbPassword) {
         helper = new SqlHelper(dbUrl, dbUser, dbPassword);
-        Class.forName("org.postgresql.Driver");
+        try {
+            Class.forName("org.postgresql.Driver");
+        }
+        catch (ClassNotFoundException e) {
+//            TODO check the type of exception
+            throw new IllegalStateException("Need to add postgres JDBC driver");
+        }
     }
 
     @Override
@@ -223,5 +229,4 @@ public class SqlStorage implements Storage {
                 }
         );
     }
-
 }

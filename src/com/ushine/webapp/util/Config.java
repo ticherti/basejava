@@ -22,9 +22,6 @@ public class Config {
         } catch (IOException e) {
             throw new IllegalStateException("Invalid config file " + PROPS.getAbsolutePath());
         }
-        catch (ClassNotFoundException e){
-            throw new IllegalStateException("Need to add postgres JDBC driver");
-        }
     }
 
     public static Config getInstance() {
