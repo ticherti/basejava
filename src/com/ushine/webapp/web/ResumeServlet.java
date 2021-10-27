@@ -4,13 +4,12 @@ import com.ushine.webapp.model.Resume;
 import com.ushine.webapp.storage.Storage;
 import com.ushine.webapp.util.Config;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Map;
-
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 public class ResumeServlet extends HttpServlet {
     private Storage storage;
@@ -24,18 +23,21 @@ public class ResumeServlet extends HttpServlet {
 
     }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        request.setCharacterEncoding("UTF-8");
-        response.setCharacterEncoding("UTF-8");
-        response.setHeader("Content-Type", "text/html; charset=UTF-8");
-        response.setContentType("text/html; charset=UTF-8");
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        request.setAttribute("resumes", storage.getAllSorted());
+        request.getRequestDispatcher("/WEB-INF/jsp/list.jsp").forward(request, response);
 
-        final String UUID = "uuid";
-        Map<String, String[]> parameters = request.getParameterMap();
-        PrintWriter writer = response.getWriter();
-        if (parameters.containsKey(UUID) && !request.getParameter(UUID).equals("")) {
-            printResume(writer, storage.get(request.getParameter(UUID)));
-        } else printAll(writer, storage);
+        //        request.setCharacterEncoding("UTF-8");
+//        response.setCharacterEncoding("UTF-8");
+//        response.setHeader("Content-Type", "text/html; charset=UTF-8");
+//        response.setContentType("text/html; charset=UTF-8");
+//
+//        final String UUID = "uuid";
+//        Map<String, String[]> parameters = request.getParameterMap();
+//        PrintWriter writer = response.getWriter();
+//        if (parameters.containsKey(UUID) && !request.getParameter(UUID).equals("")) {
+//            printResume(writer, storage.get(request.getParameter(UUID)));
+//        } else printAll(writer, storage);
     }
 
     private void printResume(PrintWriter writer, Resume r) {
