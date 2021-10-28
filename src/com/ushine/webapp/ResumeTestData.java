@@ -35,8 +35,8 @@ public class ResumeTestData {
 
     public static void fillContacts(Resume resume) {
         resume.getContacts().put(ContactType.PHONENUMBER, "+7(921) 855-0482");
-        resume.getContacts().put(ContactType.SKYPE, "skype:grigory.kislin");
-        resume.getContacts().put(ContactType.EMAIL, "mailto:gkislin@yandex.ru");
+        resume.getContacts().put(ContactType.SKYPE, "grigory.kislin");
+        resume.getContacts().put(ContactType.EMAIL, "gkislin@yandex.ru");
         resume.getContacts().put(ContactType.LINKEDIN, "https://www.linkedin.com/in/gkislin");
         resume.getContacts().put(ContactType.GITHUB, "https://github.com/gkislin");
         resume.getContacts().put(ContactType.STACKOVERFLOW, "https://stackoverflow.com/users/548473");

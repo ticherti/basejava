@@ -1,5 +1,6 @@
 package com.ushine.webapp.web;
 
+import com.ushine.webapp.model.ContactType;
 import com.ushine.webapp.model.Resume;
 import com.ushine.webapp.storage.Storage;
 import com.ushine.webapp.util.Config;
@@ -9,7 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 
 public class ResumeServlet extends HttpServlet {
     private Storage storage;
@@ -19,41 +20,54 @@ public class ResumeServlet extends HttpServlet {
         storage = Config.getInstance().getSqlStorage();
     }
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
-
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        request.setCharacterEncoding("UTF-8");
+        String uuid = request.getParameter("uuid");
+        String fullName = request.getParameter("fullName");
+        Resume r = storage.get(uuid);
+        r.setFullName(fullName);
+        for (ContactType type : ContactType.values()) {
+            String value = request.getParameter(type.name());
+            if (value != null && value.trim().length() != 0) {
+                r.addContact(type, value);
+            } else {
+//                I do not understand that. So if there was no type in contacts we still do this.
+                r.getContacts().remove(type);
+            }
+        }
+//        todo Use request.getParameterValues to get parameter map for the parameters with the same name
+        storage.update(r);
+        response.sendRedirect("resume");
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        request.setAttribute("resumes", storage.getAllSorted());
-        request.getRequestDispatcher("/WEB-INF/jsp/list.jsp").forward(request, response);
+        String uuid = request.getParameter("uuid");
+        String action = request.getParameter("action");
+        if (action == null) {
+            request.setAttribute("resumes", storage.getAllSorted());
+            request.getRequestDispatcher("/WEB-INF/jsp/list.jsp").forward(request, response);
+// todo Find out why we need return here
+            return;
+        }
+        Resume r = null;
+        switch (action) {
+            case "delete":
+                storage.delete(uuid);
+                response.sendRedirect("resume");
+                return;
+            case "view":
+            case "edit":
 
-        //        request.setCharacterEncoding("UTF-8");
-//        response.setCharacterEncoding("UTF-8");
-//        response.setHeader("Content-Type", "text/html; charset=UTF-8");
-//        response.setContentType("text/html; charset=UTF-8");
-//
-//        final String UUID = "uuid";
-//        Map<String, String[]> parameters = request.getParameterMap();
-//        PrintWriter writer = response.getWriter();
-//        if (parameters.containsKey(UUID) && !request.getParameter(UUID).equals("")) {
-//            printResume(writer, storage.get(request.getParameter(UUID)));
-//        } else printAll(writer, storage);
-    }
-
-    private void printResume(PrintWriter writer, Resume r) {
-        writer.write(String.format("<h1>%s</h1>", r.getFullName()));
-        r.getContacts().forEach((contactType, info) -> writer.write(String.format("<p>%s %s</p>", contactType, info)));
-        writer.write("</br>");
-        r.getSections().forEach((contactType, info) -> {
-            writer.write(String.format("<h3>%s</h3>", contactType));
-            writer.write(String.format("<p>%s</p>", info));
-        });
-    }
-
-    private void printAll(PrintWriter writer, Storage storage) {
-        writer.write("<table><tr><th>UUID</th><th>Name</th></tr>");
-        storage.getAllSorted().forEach(resume -> writer.write(String.format(
-                "<tr><td>%s</td><td>  %s</td></tr>", resume.getUuid(), resume.getFullName())));
-        writer.write("</table>");
+                break;
+            case "get":
+                r = storage.get(uuid);
+                break;
+            case "save":
+            default:
+                throw new IllegalStateException("The action is incorrect. Action is " + action);
+        }
+        request.setAttribute("resume", storage.get(uuid));
+        request.getRequestDispatcher(action.equals("view") ? "/WEB-INF/jsp/view.jsp" : "/WEB-INF/jsp/edit.jsp")
+                .forward(request, response);
     }
 }
