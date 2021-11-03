@@ -17,7 +17,6 @@ public class SqlStorage implements Storage {
             Class.forName("org.postgresql.Driver");
         }
         catch (ClassNotFoundException e) {
-//            TODO check the type of exception
             throw new IllegalStateException("Need to add postgres JDBC driver");
         }
     }

@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 
 public class ResumeServlet extends HttpServlet {
     private Storage storage;
@@ -20,23 +19,32 @@ public class ResumeServlet extends HttpServlet {
         storage = Config.getInstance().getSqlStorage();
     }
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         request.setCharacterEncoding("UTF-8");
         String uuid = request.getParameter("uuid");
         String fullName = request.getParameter("fullName");
-        Resume r = storage.get(uuid);
-        r.setFullName(fullName);
+        Resume r = "".equals(uuid) ? new Resume(fullName) : storage.get(uuid);
         for (ContactType type : ContactType.values()) {
             String value = request.getParameter(type.name());
             if (value != null && value.trim().length() != 0) {
                 r.addContact(type, value);
             } else {
-//                I do not understand that. So if there was no type in contacts we still do this.
                 r.getContacts().remove(type);
             }
         }
 //        todo Use request.getParameterValues to get parameter map for the parameters with the same name
-        storage.update(r);
+         if ("".equals(fullName)){
+            request.setAttribute("resume", r);
+            request.getRequestDispatcher("/WEB-INF/jsp/edit.jsp")
+                    .forward(request, response);
+            return;
+        }
+        if ("".equals(uuid)) {
+            storage.save(r);
+        } else {
+            r.setFullName(fullName);
+            storage.update(r);
+        }
         response.sendRedirect("resume");
     }
 
@@ -46,7 +54,6 @@ public class ResumeServlet extends HttpServlet {
         if (action == null) {
             request.setAttribute("resumes", storage.getAllSorted());
             request.getRequestDispatcher("/WEB-INF/jsp/list.jsp").forward(request, response);
-// todo Find out why we need return here
             return;
         }
         Resume r = null;
@@ -57,17 +64,21 @@ public class ResumeServlet extends HttpServlet {
                 return;
             case "view":
             case "edit":
-
-                break;
             case "get":
                 r = storage.get(uuid);
                 break;
             case "save":
+                r = new Resume();
+                break;
             default:
                 throw new IllegalStateException("The action is incorrect. Action is " + action);
         }
-        request.setAttribute("resume", storage.get(uuid));
+        request.setAttribute("resume", r);
         request.getRequestDispatcher(action.equals("view") ? "/WEB-INF/jsp/view.jsp" : "/WEB-INF/jsp/edit.jsp")
                 .forward(request, response);
     }
+
+//    todo Problems: crush with fast delete
+//    todo Problem: entering empty values. Still a problem.
+//    todo Problem: strange names. Add matcher
 }

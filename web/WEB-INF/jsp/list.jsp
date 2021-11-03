@@ -14,7 +14,7 @@
     <jsp:include page="fragments/header.jsp"></jsp:include>
     <div id="site_content">
         <section class="content">
-            <a href="resume?uuid=${resume.uuid}&action=edit">Add new
+            <a href="resume?uuid=${resume.uuid}&action=save">Add new
             </a>
             <table>
                 <tr>
