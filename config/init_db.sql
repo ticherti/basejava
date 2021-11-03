@@ -35,7 +35,7 @@ CREATE TABLE section
         CONSTRAINT sections_resume_uuid_fk
             REFERENCES resume
             ON DELETE CASCADE,
-    type        char(36) NOT NULL,
+    type        text     NOT NULL,
     value       text     NOT NULL
 );
 
