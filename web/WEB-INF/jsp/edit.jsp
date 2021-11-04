@@ -46,7 +46,8 @@
                 </c:forEach>
                 </p>
                 <button type="submit">Save</button>
-                <button onclick="window.history.back()">Cancel</button>
+<%--                <button onclick="window.history.back()">Cancel</button>--%>
+                <button type="reset">Cancel</button>
 
             </form>
             </p>
