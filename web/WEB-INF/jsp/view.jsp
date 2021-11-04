@@ -2,6 +2,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="com.ushine.webapp.model.Resume" %>
 <%@ page import="com.ushine.webapp.model.ContactType" %>
+<%@ page import="com.ushine.webapp.util.HtmlHelper" %>
+
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html: charset=UTF-8">
@@ -20,6 +22,11 @@
             <h2>Contacts</h2>
             <p><c:forEach items="${resume.contacts}" var="contactEntry">
             <p>${contactEntry.getKey().toHtml(contactEntry.getValue())}</p>
+            </c:forEach>
+            </p>
+            <p><c:forEach items="${resume.sections}" var="sectionEntry">
+            <h2>${sectionEntry.getKey().getTitle()}</h2>
+            <p>${HtmlHelper.toHtml(sectionEntry, false)}</p>
             </c:forEach>
             </p>
         </section>

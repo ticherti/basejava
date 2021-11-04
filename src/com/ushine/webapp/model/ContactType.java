@@ -1,23 +1,23 @@
 package com.ushine.webapp.model;
 
 public enum ContactType {
-    PHONENUMBER("Тел.:"),
-    SKYPE("Skype:") {
+    PHONENUMBER("Тел."),
+    SKYPE("Skype") {
         @Override
         public String toHtmlNull(String value) {
             return "<a href='skype:" + value + "'>" + value + "</a>";
         }
     },
-    EMAIL("Почта:") {
+    EMAIL("Почта") {
         @Override
         public String toHtmlNull(String value) {
             return "<a href='mailto:" + value + "'>" + value + "</a>";
         }
     },
-    LINKEDIN("Linkedin:"),
-    GITHUB("GitHub:"),
-    STACKOVERFLOW("Stackoverflow:"),
-    HOMEPAGE("Домашняя страница:");
+    LINKEDIN("Linkedin"),
+    GITHUB("GitHub"),
+    STACKOVERFLOW("Stackoverflow"),
+    HOMEPAGE("Домашняя страница");
 
     private final String title;
 
