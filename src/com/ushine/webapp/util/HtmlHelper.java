@@ -1,9 +1,6 @@
 package com.ushine.webapp.util;
 
-import com.ushine.webapp.model.AbstractSection;
-import com.ushine.webapp.model.ListSection;
-import com.ushine.webapp.model.SectionType;
-import com.ushine.webapp.model.TextSection;
+import com.ushine.webapp.model.*;
 
 import java.util.Map;
 
@@ -17,6 +14,19 @@ public class HtmlHelper {
     public static String toHtml(Map.Entry<SectionType, AbstractSection> sectionEntry, boolean isForEdit) {
         AbstractSection as = sectionEntry.getValue();
         return as == null ? "" :  htmlByType(sectionEntry.getKey(), as, false);
+    }
+
+    public static String getContactPatter(ContactType type){
+        switch (type){
+            case PHONENUMBER:
+                return "[0-9]{5,}";
+            case SKYPE:
+                return "[a-z][a-z0-9]{4,31}";
+            case EMAIL:
+                return "[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$";
+            default:
+                return ".{1,50}";
+        }
     }
 
     private static String htmlByType(SectionType type, AbstractSection as, boolean isForEdit) {

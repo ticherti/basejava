@@ -26,11 +26,13 @@ public class ResumeServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         request.setCharacterEncoding("UTF-8");
         String uuid = request.getParameter("uuid");
-        String fullName = request.getParameter("fullName");
+        String fullName = request.getParameter("fullName").replaceAll(
+                "[^А-Яа-яa-zA-Z0-9 ]", "");
         Resume r = "".equals(uuid) ? new Resume(fullName) : storage.get(uuid);
         saveContacts(request, r);
         saveSections(request, r);
-//        todo Use request.getParameterValues to get parameter map for the parameters with the same name. But on what exactly
+//        todo Use request.getParameterValues to get parameter map for the parameters with the same name.
+//         But how to get them here?
         if ("".equals(fullName)) {
             request.setAttribute("resume", r);
             request.getRequestDispatcher("/WEB-INF/jsp/edit.jsp")
@@ -54,7 +56,7 @@ public class ResumeServlet extends HttpServlet {
             request.getRequestDispatcher("/WEB-INF/jsp/list.jsp").forward(request, response);
             return;
         }
-        Resume r = null;
+        Resume r;
         switch (action) {
             case "delete":
                 storage.delete(uuid);
@@ -90,9 +92,9 @@ public class ResumeServlet extends HttpServlet {
     private void saveSections(HttpServletRequest request, Resume resume) {
         for (SectionType type : SectionType.values()) {
             String value = request.getParameter(type.name()).trim();
-            LOG.info(type+ "" +value);
+            LOG.info(type + "" + value);
 
-            if (value != null && value.trim().length() != 0) {
+            if (value.trim().length() != 0) {
                 LOG.info("switching");
                 switch (type) {
                     case PERSONAL:
@@ -122,5 +124,4 @@ public class ResumeServlet extends HttpServlet {
     }
 
 //    todo Problems: crush with fast delete
-//    todo Problem: strange names, empty space lines. Add matcher, not only in html form
 }

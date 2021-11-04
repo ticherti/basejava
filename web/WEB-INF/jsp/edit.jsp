@@ -22,7 +22,8 @@
                 <input type="hidden" name="uuid" value="${resume.uuid}">
                 <dl>
                     <dt>Name</dt>
-                    <dd><input type="text" name="fullName" size=50 pattern="[А-Яа-яA-Za-z\s]{2,}" value="${resume.fullName}" required></dd>
+                    <dd><input type="text" name="fullName" size=50 pattern="[А-Яа-яa-zA-Z0-9\s]{2,}"
+                               value="${resume.fullName}" required></dd>
                 </dl>
                 <h3>Contacts</h3>
                 <p>
@@ -31,7 +32,7 @@
                         <%--                todo I do not understand why we can use type.title here if the field is private--%>
                     <dt>${type.title}</dt>
                     <dd>
-                        <input type="text" name="${type.name()}" size="50" value="${resume.getContact(type)}">
+                        <input type="text" name="${type.name()}" pattern="${HtmlHelper.getContactPatter(type)}" size="50" value="${resume.getContact(type)}">
                     </dd>
                 </dl>
                 </c:forEach>
