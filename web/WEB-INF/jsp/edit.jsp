@@ -13,7 +13,6 @@
     <title>Edit resume ${resume.fullName}</title>
 </head>
 <body>
-<%--todo check out if i need html util class --%>
 <div id="main">
     <jsp:include page="fragments/header.jsp"></jsp:include>
     <div id="site_content">
@@ -23,34 +22,37 @@
                 <dl>
                     <dt>Name</dt>
                     <dd><input type="text" name="fullName" size=50 pattern="[А-Яа-яa-zA-Z0-9\s]{2,}"
+                               placeholder="full name"
                                value="${resume.fullName}" required></dd>
                 </dl>
                 <h3>Contacts</h3>
-                <p>
-                    <c:forEach var="type" items="${ContactType.values()}">
-                <dl>
-                        <%--                todo I do not understand why we can use type.title here if the field is private--%>
-                    <dt>${type.title}</dt>
-                    <dd>
-                        <input type="text" name="${type.name()}" pattern="${HtmlHelper.getContactPatter(type)}" size="50" value="${resume.getContact(type)}">
-                    </dd>
-                </dl>
-                </c:forEach>
-                <c:forEach var="type" items="${SectionType.values()}">
+                <c:forEach var="type" items="${ContactType.values()}">
                     <dl>
+                            <%--                todo I do not understand why we can use type.title here if the field is private--%>
                         <dt>${type.title}</dt>
                         <dd>
-                        <textarea name="${type.name()}" cols="50" rows="8">${HtmlHelper.toHtml(type, resume.getSection(type))}</textarea>
+                            <input type="text" name="${type.name()}" pattern="${HtmlHelper.getContactPatter(type)}"
+                                   size="50"
+                                   placeholder="${HtmlHelper.getContactPlaceHolder(type)}"
+                                   value="${resume.getContact(type)}">
                         </dd>
                     </dl>
                 </c:forEach>
-                </p>
+                <c:forEach var="type" items="${SectionType.values()}">
+                    <c:if test="${type != SectionType.EDUCATION && type != SectionType.EXPERIENCE}">
+                        <dl>
+                            <dt>${type.title}</dt>
+                            <dd>
+                                <textarea name="${type.name()}" cols="50"
+                                          rows="8">${HtmlHelper.toHtml(type, resume.getSection(type))}</textarea>
+                            </dd>
+                        </dl>
+                    </c:if>
+                </c:forEach>
                 <button type="submit">Save</button>
-<%--                <button onclick="window.history.back()">Cancel</button>--%>
                 <button type="reset">Cancel</button>
-
+                <button onclick="window.history.back()">Back</button>
             </form>
-            </p>
         </section>
     </div>
 </div>

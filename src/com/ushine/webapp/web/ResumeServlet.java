@@ -91,10 +91,9 @@ public class ResumeServlet extends HttpServlet {
 
     private void saveSections(HttpServletRequest request, Resume resume) {
         for (SectionType type : SectionType.values()) {
-            String value = request.getParameter(type.name()).trim();
+            String value = request.getParameter(type.name());
             LOG.info(type + "" + value);
-
-            if (value.trim().length() != 0) {
+            if (value != null && value.trim().length() != 0) {
                 LOG.info("switching");
                 switch (type) {
                     case PERSONAL:
@@ -106,7 +105,8 @@ public class ResumeServlet extends HttpServlet {
                         resume.addSection(type, htmlHelperReadListSection(value));
                         break;
                 }
-            } else {
+//                todo Delete "if" when there will be ready edit for education and experience
+            } else if (type != SectionType.EDUCATION && type != SectionType.EXPERIENCE) {
                 LOG.info("deleting");
                 resume.getSections().remove(type);
             }

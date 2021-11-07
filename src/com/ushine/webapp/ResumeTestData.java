@@ -51,8 +51,8 @@ public class ResumeTestData {
         resume.getSections().put(SectionType.ACHIEVEMENT, createListForAchievements());
         resume.getSections().put(SectionType.QUALIFICATIONS, createListForQualifications());
 
-//        resume.getSections().put(SectionType.EXPERIENCE, createListForExperience());
-//        resume.getSections().put(SectionType.EDUCATION, createListforEducation());
+        resume.getSections().put(SectionType.EXPERIENCE, createListForExperience());
+        resume.getSections().put(SectionType.EDUCATION, createListforEducation());
 
     }
 

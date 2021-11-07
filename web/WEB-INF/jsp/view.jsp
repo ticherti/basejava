@@ -13,14 +13,16 @@
     <title>${resume.fullName}</title>
 </head>
 <body>
-<%--todo check out if i need html util class --%>
 <div id="main">
     <jsp:include page="fragments/header.jsp"></jsp:include>
     <div id="site_content">
         <section class="content">
             <h1>${resume.fullName}</h1> <a href="resume?action=edit&uuid=${resume.uuid}">Edit</a>
-            <h2>Contacts</h2>
+            <c:if test="${resume.contacts.size() > 0}">
+                <h2>Contacts</h2>
+            </c:if>
             <p><c:forEach items="${resume.contacts}" var="contactEntry">
+
             <p>${contactEntry.getKey().toHtml(contactEntry.getValue())}</p>
             </c:forEach>
             </p>

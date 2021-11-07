@@ -176,6 +176,9 @@ public class SqlStorage implements Storage {
             case QUALIFICATIONS:
                 resume.addSection(st, JsonParser.read(rs.getString("value"), ListSection.class));
                 break;
+            case EDUCATION:
+            case EXPERIENCE:
+                resume.addSection(st, JsonParser.read(rs.getString("value"), OrganizationSection.class));
         }
     }
 
