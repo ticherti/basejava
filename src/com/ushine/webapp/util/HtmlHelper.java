@@ -2,6 +2,7 @@ package com.ushine.webapp.util;
 
 import com.ushine.webapp.model.*;
 
+import java.util.List;
 import java.util.Map;
 
 public class HtmlHelper {
@@ -72,7 +73,27 @@ public class HtmlHelper {
     }
 
     private static String toOrgView(OrganizationSection os) {
-        return os.toString();
+        List<Organization> list = os.getOrganizations();
+        final String OPEN_P = "<p>";
+        final String CLOSE_P = "</p>";
+        final String OPEN_B = "<b>";
+        final String CLOSE_B = "</b>";
+        final String OPEN_UL = "<ul>";
+        final String CLOSE_UL = "</ul>";
+        final String OPEN_LI = "<li>";
+        final String CLOSE_LI = "</li>";
+        StringBuilder sb = new StringBuilder();
+        list.forEach(organization -> {
+            sb.append(OPEN_P).append(OPEN_B)
+                    .append(organization.getPlaceName())
+                    .append(CLOSE_B).append(CLOSE_P)
+                    .append(OPEN_P).append(OPEN_UL);
+            organization.getPositions().forEach(position -> sb.append(OPEN_LI)
+                    .append(position.toString())
+                    .append(CLOSE_LI));
+            sb.append(CLOSE_UL).append(CLOSE_P);
+        });
+        return sb.toString();
     }
 }
 
