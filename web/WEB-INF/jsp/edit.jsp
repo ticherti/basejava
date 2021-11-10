@@ -3,6 +3,7 @@
 <%@ page import="com.ushine.webapp.model.Resume" %>
 <%@ page import="com.ushine.webapp.model.ContactType" %>
 <%@ page import="com.ushine.webapp.model.SectionType" %>
+<%@ page import="com.ushine.webapp.model.Organization" %>
 <%@ page import="com.ushine.webapp.util.HtmlHelper" %>
 
 <html>
@@ -39,15 +40,62 @@
                     </dl>
                 </c:forEach>
                 <c:forEach var="type" items="${SectionType.values()}">
-                    <c:if test="${type != SectionType.EDUCATION && type != SectionType.EXPERIENCE}">
-                        <dl>
-                            <dt>${type.title}</dt>
-                            <dd>
+                    <c:choose>
+                        <c:when test="${type != SectionType.EDUCATION && type != SectionType.EXPERIENCE}">
+                            <dl>
+                                <dt><h3>${type.title}</h3></dt>
+                                <dd>
                                 <textarea name="${type.name()}" cols="50"
                                           rows="8">${HtmlHelper.toHtml(type, resume.getSection(type))}</textarea>
-                            </dd>
-                        </dl>
-                    </c:if>
+                                </dd>
+                            </dl>
+                        </c:when>
+                        <c:otherwise>
+                            <dl>
+                                <dt><h3>${type.title}</h3></dt>
+                                <c:forEach var="org" items="${resume.getSection(type).organizations}">
+                                    <dd>
+                                        <p>Name of an organization</p>
+                                        <input type="text" name="${type.name()}"
+                                               size="50"
+                                               value="${org.placeName}">
+                                        <c:forEach var="position" items="${org.positions}">
+                                            <p>Position</p>
+                                            <input type="text" name="${type.name()}"
+                                                   size="50"
+                                                   value="${position.name}">
+                                            <c:if test="${type == SectionType.EXPERIENCE}">
+                                                <p>Description</p>
+                                                <input type="text" name="${type.name()}"
+                                                       size="50"
+                                                       value="${position.description}">
+                                            </c:if>
+                                        </c:forEach>
+
+                                    </dd>
+                                </c:forEach>
+
+                                <dd>
+                                    <p><b>New organization</b></p>
+                                    <p>Add name of an organization</p>
+                                    <input type="text" name="${type.name()}"
+                                           size="50">
+                                    <p>Enter the start date</p>
+                                    <input type="date" name="startDate">
+                                    <p>Enter the end date</p>
+                                    <input type="date" name="endDate">
+                                    <p>Add a position name</p>
+                                    <input type="text" name="${type.name()}"
+                                           size="50">
+                                    <c:if test="${type == SectionType.EXPERIENCE}">
+                                        <p>Enter a description</p>
+                                        <input type="text" name="${type.name()}"
+                                               size="50">
+                                    </c:if>
+                                </dd>
+                            </dl>
+                        </c:otherwise>
+                    </c:choose>
                 </c:forEach>
                 <button type="submit">Save</button>
                 <button type="reset">Cancel</button>

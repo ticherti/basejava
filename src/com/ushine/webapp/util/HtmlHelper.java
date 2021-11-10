@@ -17,6 +17,10 @@ public class HtmlHelper {
         AbstractSection as = sectionEntry.getValue();
         return as == null ? "" : htmlByType(sectionEntry.getKey(), as, isForEdit);
     }
+    public static String toHtml(Organization org) {
+
+        return org.toString();
+    }
 
     public static String getContactPlaceHolder(ContactType type) {
         switch (type) {
