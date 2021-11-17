@@ -69,7 +69,7 @@ public class Organization implements Serializable {
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class Position implements Serializable {
         private static final long serialVersionUID = 1L;
-        private final static LocalDate NOW_DATE = LocalDate.of(3000, 1, 1);
+        public final static LocalDate NOW_DATE = LocalDate.of(3000, 1, 1);
         @XmlJavaTypeAdapter(value = LocalDateAdapter.class)
         private LocalDate periodStart;
         @XmlJavaTypeAdapter(value = LocalDateAdapter.class)
