@@ -2,6 +2,7 @@ package com.ushine.webapp;
 
 import com.ushine.webapp.model.*;
 
+import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
@@ -93,7 +94,7 @@ public class ResumeTestData {
     private static OrganizationSection createListForExperience() {
 
         List<Organization.Position> positions = new ArrayList<>();
-        positions.add(new Organization.Position(YearMonth.parse("2013-10"), null, "Автор проекта.", "Создание, организация и проведение Java онлайн проектов и стажировок."));
+        positions.add(new Organization.Position(LocalDate.of(2013, 10,1), null, "Автор проекта.", "Создание, организация и проведение Java онлайн проектов и стажировок."));
 
         Organization newOrg = new Organization(new Link("Java Online Projects"), positions);
 
@@ -106,8 +107,8 @@ public class ResumeTestData {
     private static OrganizationSection createListforEducation() {
 
         List<Organization.Position> positions = new ArrayList<>();
-        positions.add(new Organization.Position(YearMonth.parse("1987-09"), YearMonth.parse("1993-07"), "Инженер (программист Fortran, C)", null));
-        positions.add(new Organization.Position(YearMonth.parse("1993-09"), YearMonth.parse("1996-07"), "Аспирантура (программист С, С++)", null));
+        positions.add(new Organization.Position(LocalDate.of(1987, 9, 1), LocalDate.of(1993, 7, 1), "Инженер (программист Fortran, C)", null));
+        positions.add(new Organization.Position(LocalDate.of(1993, 9, 1), LocalDate.of(1996, 7,1), "Аспирантура (программист С, С++)", null));
 
         Organization newOrg = new Organization("Санкт-Петербургский национальный исследовательский университет информационных технологий, механики и оптики", "http://www.ifmo.ru/", positions);
 

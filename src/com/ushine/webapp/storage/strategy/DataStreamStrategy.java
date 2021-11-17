@@ -3,6 +3,7 @@ package com.ushine.webapp.storage.strategy;
 import com.ushine.webapp.model.*;
 
 import java.io.*;
+import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.*;
 
@@ -132,7 +133,7 @@ public class DataStreamStrategy implements SerializeStrategy {
 
     private List<Organization.Position> readPosition(DataInputStream dis) throws IOException {
         List<Organization.Position> positions = new ArrayList<>();
-        readWithException(dis, (() -> positions.add(new Organization.Position(YearMonth.parse(read(dis)), YearMonth.parse(read(dis)), read(dis), read(dis)))));
+        readWithException(dis, (() -> positions.add(new Organization.Position(LocalDate.parse(read(dis)), LocalDate.parse(read(dis)), read(dis), read(dis)))));
         return positions;
     }
 

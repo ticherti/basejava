@@ -1,13 +1,13 @@
 package com.ushine.webapp.model;
 
-import com.ushine.webapp.util.YearMonthAdapter;
+import com.ushine.webapp.util.LocalDateAdapter;
 
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.bind.annotation.XmlAccessType;
 
 import java.io.Serializable;
-import java.time.YearMonth;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
@@ -69,18 +69,18 @@ public class Organization implements Serializable {
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class Position implements Serializable {
         private static final long serialVersionUID = 1L;
-        private final static YearMonth NOW_DATE = YearMonth.parse("3000-01");
-        @XmlJavaTypeAdapter(value = YearMonthAdapter.class)
-        private YearMonth periodStart;
-        @XmlJavaTypeAdapter(value = YearMonthAdapter.class)
-        private YearMonth periodFinish;
+        private final static LocalDate NOW_DATE = LocalDate.of(3000, 1, 1);
+        @XmlJavaTypeAdapter(value = LocalDateAdapter.class)
+        private LocalDate periodStart;
+        @XmlJavaTypeAdapter(value = LocalDateAdapter.class)
+        private LocalDate periodFinish;
         private String name;
         private String description;
 
         public Position() {
         }
 
-        public Position(YearMonth periodStart, YearMonth periodFinish, String name, String description) {
+        public Position(LocalDate periodStart, LocalDate periodFinish, String name, String description) {
             Objects.requireNonNull(periodStart, "Mustn't be null");
             Objects.requireNonNull(name, "Mustn't be null");
             this.periodStart = periodStart;
@@ -89,11 +89,11 @@ public class Organization implements Serializable {
             this.description = description;
         }
 
-        public YearMonth getPeriodStart() {
+        public LocalDate getPeriodStart() {
             return periodStart;
         }
 
-        public YearMonth getPeriodFinish() {
+        public LocalDate getPeriodFinish() {
             return periodFinish;
         }
 

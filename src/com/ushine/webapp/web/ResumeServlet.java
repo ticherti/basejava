@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
@@ -104,6 +105,10 @@ public class ResumeServlet extends HttpServlet {
                     case QUALIFICATIONS:
                         resume.addSection(type, htmlHelperReadListSection(value));
                         break;
+                    case EXPERIENCE:
+                    case EDUCATION:
+                        resume.addSection(type, htmlHelperReadOrgSection(request));
+                        break;
                 }
 //                todo Delete "if" when there will be ready edit for education and experience
             } else if (type != SectionType.EDUCATION && type != SectionType.EXPERIENCE) {
@@ -112,6 +117,8 @@ public class ResumeServlet extends HttpServlet {
             }
         }
     }
+
+
 
     private TextSection htmlHelperReadTextSection(String value) {
         return new TextSection(value);
@@ -122,6 +129,13 @@ public class ResumeServlet extends HttpServlet {
         List<String> list = Arrays.asList(value.replaceAll("</br>", "").split("\\s*\\r\\n\\s*"));
         return new ListSection(list);
     }
+    private OrganizationSection htmlHelperReadOrgSection(HttpServletRequest request) {
+        List<Organization> positions = new ArrayList<>();
+//        String value = request.getParameter(type.name());
+        return new OrganizationSection(positions);
+    }
+
+
 
 //    todo Problems: crush with fast delete
 }

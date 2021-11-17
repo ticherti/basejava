@@ -20,83 +20,112 @@
         <section class="content">
             <form method="post" action="resume" enctype="application/x-www-form-urlencoded">
                 <input type="hidden" name="uuid" value="${resume.uuid}">
-                <dl>
-                    <dt>Name</dt>
-                    <dd><input type="text" name="fullName" size=50 pattern="[А-Яа-яa-zA-Z0-9\s]{2,}"
-                               placeholder="full name"
-                               value="${resume.fullName}" required></dd>
-                </dl>
+                <label for="fullName">Name</label>
+                <input type="text" id="fullName"
+                       name="fullName" size=50 pattern="[А-Яа-яa-zA-Z0-9\s]{2,}"
+                       placeholder="full name"
+                       value="${resume.fullName}" required>
                 <h3>Contacts</h3>
                 <c:forEach var="type" items="${ContactType.values()}">
-                    <dl>
-                            <%--                todo I do not understand why we can use type.title here if the field is private--%>
-                        <dt>${type.title}</dt>
-                        <dd>
-                            <input type="text" name="${type.name()}" pattern="${HtmlHelper.getContactPatter(type)}"
-                                   size="50"
-                                   placeholder="${HtmlHelper.getContactPlaceHolder(type)}"
-                                   value="${resume.getContact(type)}">
-                        </dd>
-                    </dl>
+                    <%--                todo I do not understand why we can use type.title here if the field is private--%>
+                    <label for="${type}">${type.title}</label>
+                    <input type="text" id="${type}"
+                           name="${type.name()}" pattern="${HtmlHelper.getContactPatter(type)}"
+                           size="50"
+                           placeholder="${HtmlHelper.getContactPlaceHolder(type)}"
+                           value="${resume.getContact(type)}">
+                    </br>
                 </c:forEach>
                 <c:forEach var="type" items="${SectionType.values()}">
                     <c:choose>
                         <c:when test="${type != SectionType.EDUCATION && type != SectionType.EXPERIENCE}">
-                            <dl>
-                                <dt><h3>${type.title}</h3></dt>
-                                <dd>
-                                <textarea name="${type.name()}" cols="50"
-                                          rows="8">${HtmlHelper.toHtml(type, resume.getSection(type))}</textarea>
-                                </dd>
-                            </dl>
+                            <h3><label for="${type}">${type.title}</label></h3>
+                            <textarea id="${type}"
+                                      name="${type.name()}" cols="50"
+                                      rows="8">${HtmlHelper.toHtml(type, resume.getSection(type))}</textarea>
                         </c:when>
                         <c:otherwise>
-                            <dl>
-                                <dt><h3>${type.title}</h3></dt>
-                                <c:forEach var="org" items="${resume.getSection(type).organizations}">
-                                    <dd>
-                                        <p>Name of an organization</p>
-                                        <input type="text" name="${type.name()}"
+                            <h3>${type.title}</h3>
+                            <c:set var="orgCount" value="${0}"/>
+                            <c:choose>
+                                <c:when test="${type == SectionType.EDUCATION}">
+                                    <c:set var="prefix" value="job"/>
+                                </c:when>
+                                <c:otherwise>
+                                    <c:set var="prefix" value="edu"/>
+                                </c:otherwise>
+                            </c:choose>
+                            <c:forEach var="org" items="${resume.getSection(type).organizations}">
+                                <c:set var="orgCount" value="${orgCount + 0}"/>
+                                <p><label>Name of an organization
+                                    <input type="text" name="${type.name()}"
+                                           size="50"
+                                           value="${org.placeName}">
+                                </label></p>
+
+                                <c:forEach var="position" items="${org.positions}">
+                                    <p><label>Start date
+                                        <input type="date" name="${prefix}${orgCount}startDate"
+                                               value="${position.periodStart}">
+                                    </label></p>
+                                    <p><label>End date
+                                        <input type="date" name="${prefix}${orgCount}endDate"
+                                               value="${position.periodFinish}">
+                                    </label></p>
+                                    <p><label>Position
+                                        <input type="text" name="${prefix}${orgCount}position"
                                                size="50"
-                                               value="${org.placeName}">
-                                        <c:forEach var="position" items="${org.positions}">
-                                            <p>Position</p>
-                                            <input type="text" name="${type.name()}"
-                                                   size="50"
-                                                   value="${position.name}">
-                                            <c:if test="${type == SectionType.EXPERIENCE}">
-                                                <p>Description</p>
-                                                <input type="text" name="${type.name()}"
-                                                       size="50"
-                                                       value="${position.description}">
-                                            </c:if>
-                                        </c:forEach>
-
-                                    </dd>
-                                </c:forEach>
-
-                                <dd>
-                                    <p><b>New organization</b></p>
-                                    <p>Add name of an organization</p>
-                                    <input type="text" name="${type.name()}"
-                                           size="50">
-                                    <p>Enter the start date</p>
-                                    <input type="date" name="startDate">
-                                    <p>Enter the end date</p>
-                                    <input type="date" name="endDate">
-                                    <p>Add a position name</p>
-                                    <input type="text" name="${type.name()}"
-                                           size="50">
+                                               value="${position.name}">
+                                    </label></p>
                                     <c:if test="${type == SectionType.EXPERIENCE}">
-                                        <p>Enter a description</p>
-                                        <input type="text" name="${type.name()}"
-                                               size="50">
+                                        <p><label>Description
+                                            <input type="text" name="${prefix}${orgCount}description"
+                                                   size="50"
+                                                   value="${position.description}"></label>
+                                        </p>
                                     </c:if>
-                                </dd>
-                            </dl>
+                                </c:forEach>
+                                <p>Add new position</p>
+                                <p><label>Enter the start date
+                                    <input type="date" name="${prefix}${orgCount}startDate"></label></p>
+                                <p><label>Enter the end date
+                                    <input type="date" name="${prefix}${orgCount}endDate"></label></p>
+                                <p><label>Add a position name
+                                    <input type="text" name="${prefix}${orgCount}position" size="50"></label></p>
+                                <c:if test="${type == SectionType.EXPERIENCE}">
+                                    <p><label>Enter a description
+                                        <input type="text" name="${prefix}${orgCount}description" size="50"></label></p>
+                                </c:if>
+                            </c:forEach>
+
+                            <p><b>New organization</b></p>
+                            <p><label>Add name of an organization
+                                <input type="text" name="${type.name()}" size="50"></label></p>
+                            <p><label>Enter the start date
+                                <input type="date" name="startDate"></label></p>
+                            <p><label>Enter the end date
+                                <input type="date" name="endDate"></label></p>
+                            <p><label>Add a position name
+                                <input type="text" name="${type.name()}"
+                                       size="50"></label></p>
+                            <c:if test="${type == SectionType.EXPERIENCE}">
+                                <p><label>Enter a description
+                                    <input type="text" name="${type.name()}" size="50"></label></p>
+                            </c:if>
+
+                            <c:choose>
+                                <c:when test="${type != SectionType.EDUCATION}">
+                                    <c:set var="jobOrgCount" value="${orgCount}"/>
+                                </c:when>
+                                <c:otherwise>
+                                    <c:set var="eduOrgCount" value="${orgCount}"/>
+                                </c:otherwise>
+                            </c:choose>
                         </c:otherwise>
                     </c:choose>
                 </c:forEach>
+                <input type="hidden" name="job" value="${orgCount}">
+                <input type="hidden" name="edu" value="${orgCount}">
                 <button type="submit">Save</button>
                 <button type="reset">Cancel</button>
                 <button onclick="window.history.back()">Back</button>
