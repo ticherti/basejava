@@ -2,11 +2,14 @@ package com.ushine.webapp.util;
 
 import com.ushine.webapp.model.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
 public class HtmlHelper {
     private static final String NOSECTION = "No such section to show";
+    private static final String OPEN_P = "<p>";
+    private static final String CLOSE_P = "</p>";
 
     public static String toHtml(SectionType type, AbstractSection section) {
         return section == null ? "" : htmlByType(type, section, true);
@@ -78,8 +81,6 @@ public class HtmlHelper {
 
     private static String toOrgView(OrganizationSection os) {
         List<Organization> list = os.getOrganizations();
-        final String OPEN_P = "<p>";
-        final String CLOSE_P = "</p>";
         final String OPEN_B = "<b>";
         final String CLOSE_B = "</b>";
         final String OPEN_UL = "<ul>";
@@ -93,10 +94,31 @@ public class HtmlHelper {
                     .append(CLOSE_B).append(CLOSE_P)
                     .append(OPEN_P).append(OPEN_UL);
             organization.getPositions().forEach(position -> sb.append(OPEN_LI)
-                    .append(position.toString())
+                    .append(positionToView(position))
                     .append(CLOSE_LI));
             sb.append(CLOSE_UL).append(CLOSE_P);
         });
+        return sb.toString();
+    }
+    private static String positionToView(Organization.Position position){
+        final String OPEN_I = "<i>";
+        final String CLOSE_I = "</i>";
+        StringBuilder sb = new StringBuilder();
+        LocalDate endDate = position.getPeriodFinish();
+        sb.append(OPEN_P)
+                .append(position.getPeriodStart())
+                .append(" - ")
+                .append(endDate.equals(Organization.Position.NOW_DATE) ? "now" : endDate)
+                .append(CLOSE_P)
+                .append(OPEN_P)
+                .append(position.getName())
+                .append(CLOSE_P);
+        String description = position.getDescription();
+        if (description != null && !description.isEmpty()){
+            sb.append(OPEN_P).append(OPEN_I)
+                    .append(position.getDescription())
+                    .append(CLOSE_I).append(CLOSE_P);
+        }
         return sb.toString();
     }
 }

@@ -31,6 +31,7 @@
             <p>${HtmlHelper.toHtml(sectionEntry, false)}</p>
             </c:forEach>
             </p>
+            <p><a href="resume?action=edit&uuid=${resume.uuid}">Edit</a></p>
         </section>
     </div>
 </div>
