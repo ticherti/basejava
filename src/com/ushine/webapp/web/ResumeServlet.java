@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -94,6 +95,7 @@ public class ResumeServlet extends HttpServlet {
         for (SectionType type : SectionType.values()) {
             String value = request.getParameter(type.name());
             LOG.info(type + "" + value);
+//            questionable. value is what i send in org name
             if (value != null && value.trim().length() != 0) {
                 LOG.info("switching");
                 switch (type) {
@@ -107,17 +109,16 @@ public class ResumeServlet extends HttpServlet {
                         break;
                     case EXPERIENCE:
                     case EDUCATION:
-                        resume.addSection(type, htmlHelperReadOrgSection(request));
+                        resume.addSection(type, htmlHelperReadOrgSection(request, type));
                         break;
                 }
 //                todo Delete "if" when there will be ready edit for education and experience
-            } else if (type != SectionType.EDUCATION && type != SectionType.EXPERIENCE) {
+            } else {
                 LOG.info("deleting");
                 resume.getSections().remove(type);
             }
         }
     }
-
 
 
     private TextSection htmlHelperReadTextSection(String value) {
@@ -129,13 +130,48 @@ public class ResumeServlet extends HttpServlet {
         List<String> list = Arrays.asList(value.replaceAll("</br>", "").split("\\s*\\r\\n\\s*"));
         return new ListSection(list);
     }
-    private OrganizationSection htmlHelperReadOrgSection(HttpServletRequest request) {
-        List<Organization> positions = new ArrayList<>();
-//        String value = request.getParameter(type.name());
-        return new OrganizationSection(positions);
+
+    private OrganizationSection htmlHelperReadOrgSection(HttpServletRequest request, SectionType type) {
+        List<Organization> organizations = new ArrayList<>();
+        String[] orgNames = request.getParameterValues(type.name());
+        for (int i = 0; i < orgNames.length; i++) {
+            String orgName = orgNames[i];
+            if (isPresent(orgName)) {
+                List<Organization.Position> positions = getPositions(request.getParameterValues(type.name() + i + "startDate"),
+                        request.getParameterValues(type.name() + i + "endDate"),
+                        request.getParameterValues(type.name() + i + "position"),
+                        request.getParameterValues(type.name() + i + "description"));
+                if (positions.size() != 0) {
+                    organizations.add(new Organization(new Link(orgName), positions));
+                }
+            }
+        }
+        return new OrganizationSection(organizations);
     }
 
+    private List<Organization.Position> getPositions(String[] startDates, String[] endDates,
+                                                     String[] positionNames, String[] descriptions) {
+        List<Organization.Position> positions = new ArrayList<>();
+        for (int i = 0; i < positionNames.length; i++) {
+            if (isPresent(positionNames[i]) && isPresent(startDates[i])) {
+                String description = descriptions == null ? null : descriptions[i];
+                Organization.Position position = new Organization.Position(checkedDate(startDates[i]),
+                        checkedDate(endDates[i]), positionNames[i],
+                        description);
+                positions.add(position);
+            }
+        }
+        return positions;
+    }
 
+    private boolean isPresent(String line) {
+        return line != null && !line.isEmpty();
+    }
 
+    private LocalDate checkedDate(String line) {
+        return line.isEmpty() ? null : LocalDate.parse(line);
+    }
+
+// todo in view remove names of sections if there are none
 //    todo Problems: crush with fast delete
 }

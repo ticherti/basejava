@@ -47,16 +47,16 @@
                         <c:otherwise>
                             <h3>${type.title}</h3>
                             <c:set var="orgCount" value="${0}"/>
-                            <c:choose>
-                                <c:when test="${type == SectionType.EDUCATION}">
-                                    <c:set var="prefix" value="job"/>
-                                </c:when>
-                                <c:otherwise>
-                                    <c:set var="prefix" value="edu"/>
-                                </c:otherwise>
-                            </c:choose>
+<%--                            <c:choose>--%>
+<%--                                <c:when test="${type == SectionType.EDUCATION}">--%>
+<%--                                    <c:set var="prefix" value="job"/>--%>
+<%--                                </c:when>--%>
+<%--                                <c:otherwise>--%>
+<%--                                    <c:set var="prefix" value="edu"/>--%>
+<%--                                </c:otherwise>--%>
+<%--                            </c:choose>--%>
                             <c:forEach var="org" items="${resume.getSection(type).organizations}">
-                                <c:set var="orgCount" value="${orgCount + 0}"/>
+
                                 <p><label>Name of an organization
                                     <input type="text" name="${type.name()}"
                                            size="50"
@@ -65,21 +65,21 @@
 
                                 <c:forEach var="position" items="${org.positions}">
                                     <p><label>Start date
-                                        <input type="date" name="${prefix}${orgCount}startDate"
+                                        <input type="date" name="${type.name()}${orgCount}startDate"
                                                value="${position.periodStart}">
                                     </label></p>
                                     <p><label>End date
-                                        <input type="date" name="${prefix}${orgCount}endDate"
+                                        <input type="date" name="${type.name()}${orgCount}endDate"
                                                value="${position.periodFinish}">
                                     </label></p>
                                     <p><label>Position
-                                        <input type="text" name="${prefix}${orgCount}position"
+                                        <input type="text" name="${type.name()}${orgCount}position"
                                                size="50"
                                                value="${position.name}">
                                     </label></p>
                                     <c:if test="${type == SectionType.EXPERIENCE}">
                                         <p><label>Description
-                                            <input type="text" name="${prefix}${orgCount}description"
+                                            <input type="text" name="${type.name()}${orgCount}description"
                                                    size="50"
                                                    value="${position.description}"></label>
                                         </p>
@@ -87,32 +87,33 @@
                                 </c:forEach>
                                 <p>Add new position</p>
                                 <p><label>Enter the start date
-                                    <input type="date" name="${prefix}${orgCount}startDate"></label></p>
+                                    <input type="date" name="${type.name()}${orgCount}startDate"></label></p>
                                 <p><label>Enter the end date
-                                    <input type="date" name="${prefix}${orgCount}endDate"></label></p>
+                                    <input type="date" name="${type.name()}${orgCount}endDate"></label></p>
                                 <p><label>Add a position name
-                                    <input type="text" name="${prefix}${orgCount}position" size="50"></label></p>
+                                    <input type="text" name="${type.name()}${orgCount}position" size="50"></label></p>
                                 <c:if test="${type == SectionType.EXPERIENCE}">
                                     <p><label>Enter a description
-                                        <input type="text" name="${prefix}${orgCount}description" size="50"></label></p>
+                                        <input type="text" name="${type.name()}${orgCount}description" size="50"></label></p>
                                 </c:if>
+                                <c:set var="orgCount" value="${orgCount + 1}"/>
                             </c:forEach>
 
                             <p><b>New organization</b></p>
                             <p><label>Add name of an organization
                                 <input type="text" name="${type.name()}" size="50"></label></p>
                             <p><label>Enter the start date
-                                <input type="date" name="startDate"></label></p>
+                                <input type="date" name="${type.name()}${orgCount}startDate"></label></p>
                             <p><label>Enter the end date
-                                <input type="date" name="endDate"></label></p>
+                                <input type="date" name="${type.name()}${orgCount}endDate"></label></p>
                             <p><label>Add a position name
-                                <input type="text" name="${type.name()}"
+                                <input type="text" name="${type.name()}${orgCount}position"
                                        size="50"></label></p>
                             <c:if test="${type == SectionType.EXPERIENCE}">
                                 <p><label>Enter a description
-                                    <input type="text" name="${type.name()}" size="50"></label></p>
+                                    <input type="text" name="${type.name()}${orgCount}description" size="50"></label></p>
                             </c:if>
-
+                            <c:set var="orgCount" value="${orgCount + 1}"/>
                             <c:choose>
                                 <c:when test="${type != SectionType.EDUCATION}">
                                     <c:set var="jobOrgCount" value="${orgCount}"/>
