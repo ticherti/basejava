@@ -47,20 +47,9 @@
                         <c:otherwise>
                             <h3>${type.title}</h3>
                             <c:set var="orgCount" value="${0}"/>
-<%--                            <c:choose>--%>
-<%--                                <c:when test="${type == SectionType.EDUCATION}">--%>
-<%--                                    <c:set var="prefix" value="job"/>--%>
-<%--                                </c:when>--%>
-<%--                                <c:otherwise>--%>
-<%--                                    <c:set var="prefix" value="edu"/>--%>
-<%--                                </c:otherwise>--%>
-<%--                            </c:choose>--%>
                             <c:forEach var="org" items="${resume.getSection(type).organizations}">
-
                                 <p><label>Name of an organization
-                                    <input type="text" name="${type.name()}"
-                                           size="50"
-                                           value="${org.placeName}">
+                                    <input type="text" name="${type.name()}orgName" size="50" value="${org.placeName}">
                                 </label></p>
 
                                 <c:forEach var="position" items="${org.positions}">
@@ -94,14 +83,15 @@
                                     <input type="text" name="${type.name()}${orgCount}position" size="50"></label></p>
                                 <c:if test="${type == SectionType.EXPERIENCE}">
                                     <p><label>Enter a description
-                                        <input type="text" name="${type.name()}${orgCount}description" size="50"></label></p>
+                                        <input type="text" name="${type.name()}${orgCount}description"
+                                               size="50"></label></p>
                                 </c:if>
                                 <c:set var="orgCount" value="${orgCount + 1}"/>
                             </c:forEach>
 
                             <p><b>New organization</b></p>
                             <p><label>Add name of an organization
-                                <input type="text" name="${type.name()}" size="50"></label></p>
+                                <input type="text" name="${type.name()}orgName" size="50"></label></p>
                             <p><label>Enter the start date
                                 <input type="date" name="${type.name()}${orgCount}startDate"></label></p>
                             <p><label>Enter the end date
@@ -111,22 +101,13 @@
                                        size="50"></label></p>
                             <c:if test="${type == SectionType.EXPERIENCE}">
                                 <p><label>Enter a description
-                                    <input type="text" name="${type.name()}${orgCount}description" size="50"></label></p>
+                                    <input type="text" name="${type.name()}${orgCount}description" size="50"></label>
+                                </p>
                             </c:if>
-                            <c:set var="orgCount" value="${orgCount + 1}"/>
-                            <c:choose>
-                                <c:when test="${type != SectionType.EDUCATION}">
-                                    <c:set var="jobOrgCount" value="${orgCount}"/>
-                                </c:when>
-                                <c:otherwise>
-                                    <c:set var="eduOrgCount" value="${orgCount}"/>
-                                </c:otherwise>
-                            </c:choose>
+                            <input type="hidden" name="${type.name()}" value="orgCount">
                         </c:otherwise>
                     </c:choose>
                 </c:forEach>
-                <input type="hidden" name="job" value="${orgCount}">
-                <input type="hidden" name="edu" value="${orgCount}">
                 <button type="submit">Save</button>
                 <button type="reset">Cancel</button>
                 <button onclick="window.history.back()">Back</button>

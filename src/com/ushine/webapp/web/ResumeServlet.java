@@ -95,9 +95,7 @@ public class ResumeServlet extends HttpServlet {
         for (SectionType type : SectionType.values()) {
             String value = request.getParameter(type.name());
             LOG.info(type + "" + value);
-//            questionable. value is what i send in org name
             if (value != null && value.trim().length() != 0) {
-                LOG.info("switching");
                 switch (type) {
                     case PERSONAL:
                     case OBJECTIVE:
@@ -109,12 +107,15 @@ public class ResumeServlet extends HttpServlet {
                         break;
                     case EXPERIENCE:
                     case EDUCATION:
-                        resume.addSection(type, htmlHelperReadOrgSection(request, type));
+                        OrganizationSection orgSection = htmlHelperReadOrgSection(request, type);
+                        if (orgSection == null) {
+                            resume.getSections().remove(type);
+                        } else {
+                            resume.addSection(type, orgSection);
+                        }
                         break;
                 }
-//                todo Delete "if" when there will be ready edit for education and experience
             } else {
-                LOG.info("deleting");
                 resume.getSections().remove(type);
             }
         }
@@ -133,7 +134,7 @@ public class ResumeServlet extends HttpServlet {
 
     private OrganizationSection htmlHelperReadOrgSection(HttpServletRequest request, SectionType type) {
         List<Organization> organizations = new ArrayList<>();
-        String[] orgNames = request.getParameterValues(type.name());
+        String[] orgNames = request.getParameterValues(type.name() + "orgName");
         for (int i = 0; i < orgNames.length; i++) {
             String orgName = orgNames[i];
             if (isPresent(orgName)) {
@@ -146,7 +147,7 @@ public class ResumeServlet extends HttpServlet {
                 }
             }
         }
-        return new OrganizationSection(organizations);
+        return organizations.size() == 0 ? null : new OrganizationSection(organizations);
     }
 
     private List<Organization.Position> getPositions(String[] startDates, String[] endDates,
@@ -172,6 +173,5 @@ public class ResumeServlet extends HttpServlet {
         return line.isEmpty() ? null : LocalDate.parse(line);
     }
 
-// todo in view remove names of sections if there are none
 //    todo Problems: crush with fast delete
 }
