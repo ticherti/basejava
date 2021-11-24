@@ -33,8 +33,6 @@ public class ResumeServlet extends HttpServlet {
         Resume r = "".equals(uuid) ? new Resume(fullName) : storage.get(uuid);
         saveContacts(request, r);
         saveSections(request, r);
-//        todo Use request.getParameterValues to get parameter map for the parameters with the same name.
-//         But how to get them here?
         if ("".equals(fullName)) {
             request.setAttribute("resume", r);
             request.getRequestDispatcher("/WEB-INF/jsp/edit.jsp")

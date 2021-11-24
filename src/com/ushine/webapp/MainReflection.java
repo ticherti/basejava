@@ -8,9 +8,10 @@ import java.lang.reflect.Method;
 
 public class MainReflection {
 
-    public static void main(String[] args) throws IllegalAccessException, InvocationTargetException {
+    public static void main(String[] args) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         Resume r = new Resume("Fullname");
         Field field = r.getClass().getDeclaredFields()[0];
+//        System.out.println(r.getClass().getMethod("toString").invoke(r));
         field.setAccessible(true);
         System.out.println(field.getName());
         System.out.println(field.get(r));
@@ -23,6 +24,6 @@ public class MainReflection {
                 break;
             }
         }
-        System.out.println(r);
+//        System.out.println(r);
     }
 }
